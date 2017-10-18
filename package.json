@@ -22,7 +22,6 @@
   "_resolved": "https://registry.npmjs.org/wspromisify/-/wspromisify-0.0.11.tgz",
   "_shasum": "6cf45bd945835d95ed2b0dcf6428a31d26002c74",
   "_spec": "wspromisify",
-  "_where": "C:\\Users\\m.akiliev\\Documents\\tests\\NodeWebsocketLoadTest",
   "author": {
     "name": "Michael Akiliev"
   },
