@@ -1,6 +1,6 @@
 {
   "_from": "wspromisify",
-  "_id": "wspromisify@0.0.11",
+  "_id": "wspromisify@0.0.2",
   "_inBundle": false,
   "_integrity": "sha512-586/177fc75jGEmnl4anuDbHYqENvJwYrY94PSOOmJZfEEEKICutj/ujlKdWO52N3HeXqKKJlXjzCWD6WRrz4w==",
   "_location": "/wspromisify",
@@ -53,5 +53,5 @@
   "scripts": {
     "test": "npm run test"
   },
-  "version": "0.0.2"
+  "version": "0.0.201"
 }
