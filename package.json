@@ -1,0 +1,58 @@
+{
+  "_from": "wspromisify",
+  "_id": "wspromisify@0.0.11",
+  "_inBundle": false,
+  "_integrity": "sha512-586/177fc75jGEmnl4anuDbHYqENvJwYrY94PSOOmJZfEEEKICutj/ujlKdWO52N3HeXqKKJlXjzCWD6WRrz4w==",
+  "_location": "/wspromisify",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "wspromisify",
+    "name": "wspromisify",
+    "escapedName": "wspromisify",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#DEV:/",
+    "#USER"
+  ],
+  "_resolved": "https://registry.npmjs.org/wspromisify/-/wspromisify-0.0.11.tgz",
+  "_shasum": "6cf45bd945835d95ed2b0dcf6428a31d26002c74",
+  "_spec": "wspromisify",
+  "_where": "C:\\Users\\m.akiliev\\Documents\\tests\\NodeWebsocketLoadTest",
+  "author": {
+    "name": "Michael Akiliev"
+  },
+  "bugs": {
+    "url": "https://github.com/houd1ni/WebsocketPromisify/issues"
+  },
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "Makes it easier to handle different data via WebSockets.",
+  "homepage": "https://github.com/houd1ni/WebsocketPromisify#readme",
+  "keywords": [
+    "WebSockets",
+    "WS",
+    "Promise",
+    "REST",
+    "Ajax",
+    "Data",
+    "realtime",
+    "Easy",
+    "API"
+  ],
+  "license": "ISC",
+  "main": "WS.js",
+  "name": "wspromisify",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/houd1ni/WebsocketPromisify.git"
+  },
+  "scripts": {
+    "test": "npm run test"
+  },
+  "version": "0.0.11"
+}
