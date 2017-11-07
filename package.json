@@ -1,27 +1,27 @@
 {
-  "_from": "wspromisify",
-  "_id": "wspromisify@0.0.2",
+  "_from": "wspromisify@0.0.3",
+  "_id": "wspromisify@0.0.3",
   "_inBundle": false,
-  "_integrity": "sha512-586/177fc75jGEmnl4anuDbHYqENvJwYrY94PSOOmJZfEEEKICutj/ujlKdWO52N3HeXqKKJlXjzCWD6WRrz4w==",
+  "_integrity": "sha512-wWSjaaNK9B3wOYyw5DWhPq+AGRFx+4qBs0bbazPkNPwWwXnNLBcthnEBSZdyhqx8SGulRzV8DzH8IcUd9DbYsw==",
   "_location": "/wspromisify",
   "_phantomChildren": {},
   "_requested": {
-    "type": "tag",
+    "type": "version",
     "registry": true,
-    "raw": "wspromisify",
+    "raw": "wspromisify@0.0.201",
     "name": "wspromisify",
     "escapedName": "wspromisify",
-    "rawSpec": "",
+    "rawSpec": "0.0.201",
     "saveSpec": null,
-    "fetchSpec": "latest"
+    "fetchSpec": "0.0.201"
   },
   "_requiredBy": [
-    "#DEV:/",
-    "#USER"
+    "/"
   ],
-  "_resolved": "https://registry.npmjs.org/wspromisify/-/wspromisify-0.0.11.tgz",
-  "_shasum": "6cf45bd945835d95ed2b0dcf6428a31d26002c74",
-  "_spec": "wspromisify",
+  "_resolved": "https://registry.npmjs.org/wspromisify/-/wspromisify-0.0.201.tgz",
+  "_shasum": "e4a64f1815e2f59ec5081629187d2342d4b34c20",
+  "_spec": "wspromisify@0.0.201",
+  "_where": "C:\\Users\\m.akiliev\\Documents\\node",
   "author": {
     "name": "Michael Akiliev"
   },
@@ -45,6 +45,7 @@
   ],
   "license": "ISC",
   "main": "WS.js",
+  "module": "WS.esm.js",
   "name": "wspromisify",
   "repository": {
     "type": "git",
@@ -53,5 +54,5 @@
   "scripts": {
     "test": "npm run test"
   },
-  "version": "0.0.201"
+  "version": "0.0.3"
 }
