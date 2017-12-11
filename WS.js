@@ -11,9 +11,15 @@ const sett = (a, b) => setTimeout(b, a)
 
 const default_config = {
   data_type: 'json',  // ToDo some other stuff maybe.
+  // Debug features.
+  log: ((event, time, message) => null),
+  timer: false,
+  // Set up.
   url: 'localhost',
   timeout: 1400,
-  adapter: (host => new WebSocket(host)),
+  reconnect: 2,       // Reconnect timeout in seconds or null.
+  adapter: ((host, protocols) => new WebSocket(host, protocols)),
+  protocols: [],
   server: {
     id_key: 'id',
     data_key: 'data'
@@ -22,6 +28,25 @@ const default_config = {
 
 
 class WebSocketClient {
+
+  init_flush() {
+    this.queue    = {}  // data queuse
+    this.messages = []  // send() queue
+  }
+
+  log(event, message, time = null) {
+    const config = this.config
+    event = `WSP: ${event}`
+    if(time !== null) {
+      config.log(event, time, message)
+    } else {
+      if(config.timer) {
+        config.log(event, null, message)
+      } else {
+        config.log(event, message)
+      }
+    }
+  }
 
   on(event_name, handler, predicate) {
     return add_event(this.ws, event_name, event => {
@@ -32,21 +57,25 @@ class WebSocketClient {
   }
 
   close() {
-    delete this.queue   // Free up memory.
-    delete this.messages
+    this.init_flush()
     this.open = null
-    return this.ws.close()
+    this.ws.close()
+    this.ws = null
+    this.forcibly_closed = true
+    return null
   }
 
   async send(user_message, opts = {}) {
-    const message = {}
-    const id_key   = this.config.server.id_key
-    const data_key = this.config.server.data_key
-    const is_json = typeof opts.json == 'boolean' ? opts.data_type=='json' : this.config.json
+    this.log('Send.', user_message)
+    const config   = this.config
+    const message  = {}
+    const id_key   = config.server.id_key
+    const data_key = config.server.data_key
+    const data_type  = opts.data_type || config.data_type
 
     message[data_key] = user_message // is_json ? JSON.stringify(user_message
-    message[id_key]   = SHA1(user_message + '' + ((Math.random()*1e5)|0)).slice(0, 20)
-    if(typeof opts.top  == 'object') {
+    message[id_key]   = SHA1('' + ((Math.random()*1e5)|0)).slice(0, 20)
+    if(typeof opts.top === 'object') {
       if(opts.top[data_key]) {
         throw new Error('Attempting to set data key/token via send() options!')
       }
@@ -64,11 +93,12 @@ class WebSocketClient {
     return new Promise((ff, rj) => {
       this.queue[message[id_key]] = {
         ff,
-        data_type: this.config.data_type,
-        timeout: sett(this.config.timeout, () => {
+        data_type: config.data_type,
+        sent_time: config.timer ? Date.now() : null,
+        timeout: sett(config.timeout, () => {
           if(this.queue[message[id_key]]) {
             rj({
-              'Websocket timeout expired: ': this.config.timeout,
+              'Websocket timeout expired: ': config.timeout,
               'for the message': message
             })
             delete this.queue[message[id_key]]
@@ -78,42 +108,100 @@ class WebSocketClient {
     })
   }
 
+  async connect() { // returns status if won't open or null if ok.
+    return new Promise((ff, rj) => {
+      if(this.open === true) {
+        return ff(1)
+      }
+      const config = this.config
+      const ws = config.adapter(`ws://${config.url}`, config.protocols)
+      this.ws = ws
+      add_event(ws, 'error', (e) => {
+        this.ws = null
+        this.log('Error status 3.')
+        // Some network error: Connection refused or so.
+        return ff(3)
+      })
+      add_event(ws, 'open', (e) => {
+        this.log('Opened.')
+        this.open = true
+        const {id_key, data_key} = config.server
+        // Send all pending messages.
+        this.messages.forEach((message) => message.send())
+        // It's reconnecting.
+        if(this.reconnect_timeout !== null) {
+          clearInterval(this.reconnect_timeout)
+          this.reconnect_timeout = null
+        }
+        add_event(ws, 'close', async (e) => {
+          this.log('Closed.')
+          this.open = false
+          // Auto reconnect.
+          const reconnect = config.reconnect
+          if(
+            typeof reconnect === 'number' &&
+            !isNaN(reconnect) &&
+            !this.forcibly_closed
+          ) {
+            const reconnectFunc = async () => {
+              this.log('Trying to reconnect...')
+              if(this.ws !== null) {
+                this.ws.close()
+                this.ws = null
+              }
+              // If some error occured, try again.
+              const status = await this.connect()
+              if(status !== null) {
+                this.reconnect_timeout = setTimeout(reconnectFunc, reconnect * 1000)
+              }
+            }
+            // No need for await.
+            reconnectFunc()
+          } else {
+            this.ws = null
+            this.open = null
+          }
+          // reset the flag to reuse.
+          this.forcibly_closed = false
+        })
+        add_event(ws, 'message', (e) => {
+          try {
+            const data = JSON.parse(e.data)
+            if(data[id_key]) {
+              const q = this.queue[data[id_key]]
+              if(q) {
+                // Debug, Log.
+                const time = q.sent_time ? (Date.now() - q.sent_time) : null
+                this.log('Message.', data[data_key], time)
+                // Play.
+                q.ff(data[data_key])
+                clearTimeout(q.timeout)
+                delete this.queue[data[id_key]]
+              }
+            }
+          } catch (err) {
+            console.error(err, `JSON.parse error. Got: ${e.data}`)
+          }
+        })
+        return ff(null)
+      })
+    })
+  }
+
 
   constructor(user_config = {}) {
+    // Config.
     const config = {}
     Object.assign(config, default_config)
     Object.assign(config, user_config)
-    const id_key   = config.server.id_key
-    const data_key = config.server.data_key
-    const ws = config.adapter(`ws://${config.url}`)
-    this.ws  = ws
-    this.queue    = {}  // data queuse
-    this.messages = []  // send() queue
-    this.config   = config
-
-    add_event(ws, 'open', (e) => {
-      this.open = true
-      this.messages.forEach((message) => message.send())
-    })
-    add_event(ws, 'close', (e) => {
-      this.ws = null
-      this.open = false
-    })
-    add_event(ws, 'message', (e) => {
-      try {
-        const data = JSON.parse(e.data)
-        if(data[id_key]) {
-          const q = this.queue[data[id_key]]
-          if(q) {
-            q.ff(data[data_key])
-            clearTimeout(q.timeout)
-            delete this.queue[data[id_key]]
-          }
-        }
-      } catch (err) {
-        console.error(`JSON.parse error. Got: ${e.data}`)
-      }
-    })
+    this.config    = config
+    // Init.
+    this.init_flush()
+    // Flags.
+    this.open = false
+    this.reconnect_timeout = null
+    this.forcibly_closed = false
+    this.connect()
   }
 }
 

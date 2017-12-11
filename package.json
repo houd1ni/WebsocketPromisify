@@ -1,6 +1,6 @@
 {
-  "_from": "wspromisify@0.0.3",
-  "_id": "wspromisify@0.0.3",
+  "_from": "wspromisify@0.0.4",
+  "_id": "wspromisify@0.0.4",
   "_inBundle": false,
   "_integrity": "sha512-wWSjaaNK9B3wOYyw5DWhPq+AGRFx+4qBs0bbazPkNPwWwXnNLBcthnEBSZdyhqx8SGulRzV8DzH8IcUd9DbYsw==",
   "_location": "/wspromisify",
@@ -8,19 +8,19 @@
   "_requested": {
     "type": "version",
     "registry": true,
-    "raw": "wspromisify@0.0.201",
+    "raw": "wspromisify@0.0.4",
     "name": "wspromisify",
     "escapedName": "wspromisify",
-    "rawSpec": "0.0.201",
+    "rawSpec": "0.0.4",
     "saveSpec": null,
-    "fetchSpec": "0.0.201"
+    "fetchSpec": "0.0.4"
   },
   "_requiredBy": [
     "/"
   ],
   "_resolved": "https://registry.npmjs.org/wspromisify/-/wspromisify-0.0.201.tgz",
   "_shasum": "e4a64f1815e2f59ec5081629187d2342d4b34c20",
-  "_spec": "wspromisify@0.0.201",
+  "_spec": "wspromisify@0.0.4",
   "_where": "C:\\Users\\m.akiliev\\Documents\\node",
   "author": {
     "name": "Michael Akiliev"
@@ -54,5 +54,5 @@
   "scripts": {
     "test": "npm run test"
   },
-  "version": "0.0.3"
+  "version": "0.0.4"
 }
