@@ -3,11 +3,12 @@ Makes websocket's API just like REST with Promise-like API, with native Promises
 
 
 Makes a Promise-like WebSocket connection.
-If something sent before connection is es
+If something sent before connection is connection is estabilished, it sends when its ready.
 
 
 Default constructor config is
-```{
+```javascript
+{
   // You can also use plain text and blobs in future.
   data_type: 'json',
   // Debug features. Not required.
@@ -30,16 +31,19 @@ Default constructor config is
       id_key: 'id',
       data_key: 'data'
     }
-}```
+}
+```
 
-Methods: ```
+Methods:
+```javascript
 
   send(message),
   close()
 
 ```
 
-Example: ```
+Example:
+```javascript
 
   import * as WSP from 'wspromisify'  // Temporary. Will be regular esm.
 

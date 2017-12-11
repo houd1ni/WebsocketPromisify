@@ -1,6 +1,6 @@
 {
-  "_from": "wspromisify@0.0.4",
-  "_id": "wspromisify@0.0.4",
+  "_from": "wspromisify@0.0.201",
+  "_id": "wspromisify@0.0.201",
   "_inBundle": false,
   "_integrity": "sha512-wWSjaaNK9B3wOYyw5DWhPq+AGRFx+4qBs0bbazPkNPwWwXnNLBcthnEBSZdyhqx8SGulRzV8DzH8IcUd9DbYsw==",
   "_location": "/wspromisify",
@@ -13,22 +13,22 @@
     "escapedName": "wspromisify",
     "rawSpec": "0.0.4",
     "saveSpec": null,
-    "fetchSpec": "0.0.4"
+    "fetchSpec": "0.0.201"
   },
   "_requiredBy": [
     "/"
   ],
   "_resolved": "https://registry.npmjs.org/wspromisify/-/wspromisify-0.0.201.tgz",
   "_shasum": "e4a64f1815e2f59ec5081629187d2342d4b34c20",
-  "_spec": "wspromisify@0.0.4",
-  "_where": "C:\\Users\\m.akiliev\\Documents\\node",
+  "_spec": "wspromisify@0.0.201",
+  "_where": "C:\\Users\\m.akiliev\\Music\\WebsocketPromisify",
   "author": {
     "name": "Michael Akiliev"
   },
   "bugs": {
     "url": "https://github.com/houd1ni/WebsocketPromisify/issues"
   },
-  "bundleDependencies": false,
+  "bundleDependencies": [],
   "deprecated": false,
   "description": "Makes it easier to handle different data via WebSockets.",
   "homepage": "https://github.com/houd1ni/WebsocketPromisify#readme",
@@ -54,5 +54,5 @@
   "scripts": {
     "test": "npm run test"
   },
-  "version": "0.0.4"
+  "version": "0.0.401"
 }
