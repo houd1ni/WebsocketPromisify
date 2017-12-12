@@ -248,7 +248,7 @@ class WebSocketClient {
             const message = {};
             const id_key = config.server.id_key;
             const data_key = config.server.data_key;
-            const first_time_lazy = config.lazy && this.open === null;
+            const first_time_lazy = config.lazy && !this.open;
             // const data_type  = opts.data_type || config.data_type
             message[data_key] = user_message; // is_json ? JSON.stringify(user_message
             message[id_key] = SHA1('' + ((Math.random() * 1e5) | 0)).slice(0, 20);
@@ -291,3 +291,4 @@ class WebSocketClient {
 }
 
 module.exports = WebSocketClient;
+//# sourceMappingURL=ws.js.map
