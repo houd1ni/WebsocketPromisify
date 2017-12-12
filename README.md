@@ -63,7 +63,7 @@ Methods:
 Example:
 ```javascript
 
-  import * as WSP from 'wspromisify'  // Temporary. Will be regular esm.
+  import WSP from 'wspromisify'
 
 
   const somehost = 'example.com:8080'
