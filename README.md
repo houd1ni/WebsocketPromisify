@@ -1,9 +1,23 @@
 # WebsocketPromisify
 Makes websocket's API just like REST with Promise-like API, with native Promises.
 
+// If you detected some bug or so, please, fill an issue.
+
 
 Makes a Promise-like WebSocket connection.
-If something sent before connection is connection is estabilished, it sends when its ready.
+Features (almost all are tunable via constructor config below.)
+- Async/await ready.
+- ES-module and commonjs built-in.
+- Types (d.ts) included.
+- Automatically reconnects.
+- Any id and data keys to negotiate with your back-end.
+- Lazy connect: connects only if something sent, then send all of them!
+- Supports middleware. E.g. you can use 'ws' package in Node!
+- Custom easy .on method with or without condition: analog to .addEventListener.
+- Can log messages/frames/response time into console or wherever you want to. (Hello, firefox 57+!)
+- Any protocols field.
+- Rejects if sent into closed socket or after some timeout without response.
+- If something sent before connection is connection is estabilished, it sends when its ready.
 
 
 Default constructor config is
@@ -22,6 +36,8 @@ Default constructor config is
     timeout: 1400,
     // Reconnect timeout in seconds or null.
     reconnect: 2,
+    // Lazy connect: connects only if something sent (then sends all of them!)
+    lazy: false,
     // You can set your own middleware here.
     adapter: ((host, protocols) => new WebSocket(host, protocols)),
     // WebSocket constructor's protocol field.
@@ -37,7 +53,9 @@ Default constructor config is
 Methods:
 ```javascript
 
+  // sends any type of message.
   send(message),
+  on(event_name, handler, predicate),
   close()
 
 ```

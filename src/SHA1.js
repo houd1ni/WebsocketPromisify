@@ -2,7 +2,7 @@
 // SHA1 has been taken from https://github.com/jbt/js-crypto
 // Thank you, James, for this tiny implementation!
 
-sha1 = function (str1){
+export default (str1) => {
   for (
     var blockstart = 0,
       i = 0,
@@ -40,5 +40,3 @@ sha1 = function (str1){
   for(str1 = ''; i < 40; )str1 += (H[i >> 3] >> (7 - i++ % 8) * 4 & 15).toString(16);
   return str1;
 }
-
-module.exports = sha1
