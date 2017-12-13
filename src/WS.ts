@@ -139,6 +139,10 @@ class WebSocketClient implements WebSocketClient {
     })
   }
 
+  public get socket() {
+    return this.ws
+  }
+
   public on(event_name, handler, predicate) {
     return add_event(this.ws, event_name, event => {
       if(!predicate || predicate(event)) {

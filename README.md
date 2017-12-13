@@ -1,7 +1,9 @@
 # WebsocketPromisify
 Makes websocket's API just like REST with Promise-like API, with native Promises.
+Has yummies and very lightweight!
 
 // If you detected some bug or so, please, fill an issue.
+// Large data support, streams and different server-side implementations are coming.
 
 
 Makes a Promise-like WebSocket connection.
@@ -10,6 +12,7 @@ Features (almost all are tunable via constructor config below.)
 - ES-module and commonjs built-in.
 - Types (d.ts) included.
 - Automatically reconnects.
+- You can use the WebSocket (or your ws-like implementation) further in other stuff (socket property).
 - Any id and data keys to negotiate with your back-end.
 - Lazy connect: connects only if something sent, then send all of them!
 - Supports middleware. E.g. you can use 'ws' package in Node!
@@ -18,6 +21,13 @@ Features (almost all are tunable via constructor config below.)
 - Any protocols field.
 - Rejects if sent into closed socket or after some timeout without response.
 - If something sent before connection is connection is estabilished, it sends when its ready.
+
+How it on Server Side ?
+```
+  1. Serialized JSON is sent by this lib = {id: 'generated_id', data: your data}
+  2. Some Server processing...
+  3. Serialized JSON is sent back by the Server = {id: 'the same generated_id', data: feedback data}
+```
 
 
 Default constructor config is
@@ -50,12 +60,21 @@ Default constructor config is
 }
 ```
 
+Fields/Props:
+```javascript
+
+  // read-only, returns WebSocket (or so) instance to use with other stuff.
+  socket
+```
+
 Methods:
 ```javascript
 
   // sends any type of message.
   send(message),
-  on(event_name, handler, predicate),
+  // .addEventListener with optional predicate.
+  on(event_name, handler, predicate = (WebSocketEvent) => true),
+  // Closes the connection and free up memory.
   close()
 
 ```
