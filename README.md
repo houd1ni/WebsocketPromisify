@@ -3,7 +3,8 @@ Makes websocket's API just like REST with Promise-like API, with native Promises
 Has yummies and very lightweight!
 
 // If you detected some bug or so, please, fill an issue.
-// Large data support, streams and different server-side implementations are coming. See 
+Large data support, streams and different server-side implementations are coming.
+To see a Node.js server-side part, please, take a look on test/mock in github repo.
 
 
 Makes a Promise-like WebSocket connection.
@@ -70,11 +71,13 @@ Fields/Props:
 Methods:
 ```javascript
 
-  // sends any type of message.
+  // Returns Promise that connection is open. Works even if it already opened.
+  ready()
+  // sends any type of message and returns a Promise.
   send(message),
   // .addEventListener with optional predicate.
   on(event_name, handler, predicate = (WebSocketEvent) => true),
-  // Closes the connection and free up memory.
+  // Closes the connection and free up memory. Returnds Promise that it has been done.
   close()
 
 ```
@@ -89,6 +92,7 @@ Example:
 
   const someFunction = async () => {
     const ws = new WSP({
+      // Just a random config. log() is ok.
       url: `${somehost}/ws`,
       timeout: 2e3,
       timer: true,
@@ -102,6 +106,8 @@ Example:
     })
 
     try {
+      // You can wait for ready by calling await ws.ready() or send it right now:
+      // the messages will be sent as soon as the connection opened.
       const data = await ws.send({catSaid: 'Meow!'})
       console.log({data})
     } catch(error) {

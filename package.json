@@ -68,7 +68,7 @@
     "prod:es": "rollup -c --config src/rollup.config.js --environment INCLUDE_DEPS,BUILD:es",
     "prod": "npm run prod:es && npm run prod:cjs"
   },
-  "version": "0.0.51",
+  "version": "0.0.511",
   "devDependencies": {
     "@types/node": "^8.0.58",
     "@types/ramda": "^0.25.8",
