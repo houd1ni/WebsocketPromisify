@@ -1,0 +1,25 @@
+{
+    "defaultSeverity": "error",
+    "jsRules": {},
+    "rules": {
+        "semicolon": false,
+        "whitespace": false,
+        "quotemark": [true, "single", "jsx-double"],
+        "max-line-length": {
+            "options": [120]
+        },
+        "new-parens": true,
+        "no-arg": true,
+        "no-console": {
+            "severity": "warning",
+            "options": [
+                "debug",
+                "info",
+                "time",
+                "timeEnd",
+                "trace"
+            ]
+        }
+    },
+    "rulesDirectory": []
+}

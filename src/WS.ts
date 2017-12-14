@@ -38,6 +38,8 @@ class WebSocketClient implements WebSocketClient {
   private reconnect_timeout: NodeJS.Timer = null
   private queue = {}
   private messages = []
+  private onReadyQueue = []
+  private onCloseQueue = []
   private config = <types.Config>{}
 
   private init_flush(): void {
@@ -76,6 +78,8 @@ class WebSocketClient implements WebSocketClient {
       add_event(ws, 'open', (e) => {
         this.log('Opened.')
         this.open = true
+        this.onReadyQueue.forEach((fn) => fn())
+        this.onReadyQueue = []
         const {id_key, data_key} = config.server
         // Send all pending messages.
         this.messages.forEach((message) => message.send())
@@ -87,6 +91,8 @@ class WebSocketClient implements WebSocketClient {
         add_event(ws, 'close', async (e) => {
           this.log('Closed.')
           this.open = false
+          this.onCloseQueue.forEach((fn) => fn())
+          this.onCloseQueue = []
           // Auto reconnect.
           const reconnect = config.reconnect
           if(
@@ -143,7 +149,17 @@ class WebSocketClient implements WebSocketClient {
     return this.ws
   }
 
-  public on(event_name, handler, predicate) {
+  public async ready() {
+    return new Promise((ff, rj) => {
+      if(this.open) {
+        return true
+      } else {
+        this.onReadyQueue.push(ff)
+      }
+    })
+  }
+
+  public on(event_name, handler, predicate?) {
     return add_event(this.ws, event_name, event => {
       if(!predicate || predicate(event)) {
         handler(event)
@@ -151,13 +167,17 @@ class WebSocketClient implements WebSocketClient {
     })
   }
 
-  public close() {
-    this.init_flush()
-    this.open = null
-    this.ws.close()
-    this.ws = null
-    this.forcibly_closed = true
-    return null
+  public async close() {
+    return new Promise((ff, rj) => {
+      this.open = null
+      this.onCloseQueue.push(() => {
+        this.init_flush()
+        this.ws = null
+        this.forcibly_closed = true
+        ff()
+      })
+      this.ws.close()
+    })
   }
 
   public async send(user_message, opts = <types.SendOptions>{}) {

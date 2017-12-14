@@ -3,7 +3,7 @@ Makes websocket's API just like REST with Promise-like API, with native Promises
 Has yummies and very lightweight!
 
 // If you detected some bug or so, please, fill an issue.
-// Large data support, streams and different server-side implementations are coming.
+// Large data support, streams and different server-side implementations are coming. See 
 
 
 Makes a Promise-like WebSocket connection.
@@ -20,7 +20,7 @@ Features (almost all are tunable via constructor config below.)
 - Can log messages/frames/response time into console or wherever you want to. (Hello, firefox 57+!)
 - Any protocols field.
 - Rejects if sent into closed socket or after some timeout without response.
-- If something sent before connection is connection is estabilished, it sends when its ready.
+- If something sent before connection is estabilished, it sends when its ready.
 
 How it on Server Side ?
 ```

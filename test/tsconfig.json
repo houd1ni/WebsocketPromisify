@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "es2017"
+    ],
+    "allowJs": true,
+    "target": "es2017",
+    "module": "commonjs",
+    "outDir": "./dist"
+  },
+  "files": [
+    "./src/index.ts"
+  ]
+}
