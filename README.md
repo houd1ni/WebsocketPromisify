@@ -77,7 +77,7 @@ Methods:
   send(message),
   // .addEventListener with optional predicate.
   on(event_name, handler, predicate = (WebSocketEvent) => true),
-  // Closes the connection and free up memory. Returnds Promise that it has been done.
+  // Closes the connection and free up memory. Returns Promise that it has been done.
   close()
 
 ```
