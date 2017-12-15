@@ -15,7 +15,7 @@ const echo = async (t) => {
   const msg = {echo: true, msg: 'hello!'}
   const response = await ws.send(msg)
 
-  is(t)(response, msg)
+  return is(t)(response, msg)
 }
 
 

@@ -18,7 +18,7 @@ const createNew = async (config, port = 6666): Promise<WSP> => {
   await turnOn(port)
   const ws = new WSP(Object.assign({
     url: 'localhost:' + port,
-    adapter: (host, protocols) => new WS(host, protocols)
+    adapter: (host, protocols) => new (WS as any)(host, protocols)
   }, config))
 
   return ws

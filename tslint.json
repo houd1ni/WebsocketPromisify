@@ -4,7 +4,7 @@
     "rules": {
         "semicolon": false,
         "whitespace": false,
-        "quotemark": [true, "single", "jsx-double"],
+        "quotemark": [true, "single"],
         "max-line-length": {
             "options": [120]
         },

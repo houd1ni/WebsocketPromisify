@@ -7,7 +7,7 @@ let mockServer: {[port: string]: any} = {}
 
 const createServer = async (port = 6666) => {
   if(mockServer[port] === undefined) {
-    mockServer[port] = new WS.Server({ port })
+    mockServer[port] = new (WS as any).Server({ port })
     mockServer[port].on('connection', (socket) => {
       socket.on('message', (rawMessage: string): null => {
         const {id, data} = JSON.parse(rawMessage)

@@ -4,6 +4,14 @@ export = WebSocketClient
 
 
 declare namespace WebSocketClient {
+
+  /** Stuff that in use by this lib. */
+  interface Socket {
+    readyState: number
+    send(...any: any[])
+    close()
+    addEventListener(event: string, handler: ((event: any) => any), ...any: any[])
+  }
   
   export type EventHandler = (e: any) => void
 
@@ -18,7 +26,8 @@ declare namespace WebSocketClient {
     timeout: number,
     reconnect: number,       // Reconnect timeout in seconds or null.
     lazy: boolean,
-    adapter: ((host: string, protocols?: string[]) => any),
+    socket: Socket,
+    adapter: ((host: string, protocols?: string[]) => Socket),
     protocols: string[],
     server: {
       id_key: string,
@@ -41,6 +50,7 @@ declare class WebSocketClient {
     handler: (event: string) => void,
     predicate?: (event: string) => boolean
   )
+  close(): Promise<void>
   send(user_message, opts: WebSocketClient.SendOptions): Promise<number | null>
   constructor(user_config: WebSocketClient.UserConfig)
 }

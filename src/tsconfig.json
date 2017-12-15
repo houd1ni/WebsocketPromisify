@@ -7,17 +7,17 @@
     "target":"es2015",
     "allowJs": true,
     "sourceMap": true,
-    "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "noUnusedLocals": true,
-    "pretty": true,
-    "outDir": "./dist",
-    "rootDir": "./src"
+    "noUnusedLocals": false,
+    "outDir": "../dist/",
+    "rootDir": "./",
+    "baseUrl": "./",
+    "paths": {
+      "utils": ["./utils"]
+    }
   },
-  "exclude": [
-    "node_modules",
-    "dist"
-  ],
-  "declaration": true
+  "include": [
+    "./WS.ts"
+  ]
 }

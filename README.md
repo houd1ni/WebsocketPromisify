@@ -1,10 +1,10 @@
 # WebsocketPromisify
 Makes websocket's API just like REST with Promise-like API, with native Promises.
-Has yummies and very lightweight!
+Has a lot of yummies and very lightweight (less than 5kb in gzip)!
 
-// If you detected some bug or so, please, fill an issue.
-Large data support, streams and different server-side implementations are coming.
-To see a Node.js server-side part, please, take a look on test/mock in github repo.
+// If you detected some bug, wants or some stuff to be added, feel free to open an issue!
+Large data support (chunking), plugins, streams and different server-side implementations are coming.
+To see a Node.js server-side part example, please, take a look on test/mock in github repo.
 
 
 Makes a Promise-like WebSocket connection.
@@ -14,9 +14,10 @@ Features (almost all are tunable via constructor config below.)
 - Types (d.ts) included.
 - Automatically reconnects.
 - You can use the WebSocket (or your ws-like implementation) further in other stuff (socket property).
+- And provide your own socket instance via socket config prop.
 - Any id and data keys to negotiate with your back-end.
 - Lazy connect: connects only if something sent, then send all of them!
-- Supports middleware. E.g. you can use 'ws' package in Node!
+- Supports middleware-adapter. E.g. you can use 'ws' package in Node!
 - Custom easy .on method with or without condition: analog to .addEventListener.
 - Can log messages/frames/response time into console or wherever you want to. (Hello, firefox 57+!)
 - Any protocols field.
@@ -49,6 +50,8 @@ Default constructor config is
     reconnect: 2,
     // Lazy connect: connects only if something sent (then sends all of them!)
     lazy: false,
+    // Existing socket if you already have one to augment with this force.
+    socket: null,
     // You can set your own middleware here.
     adapter: ((host, protocols) => new WebSocket(host, protocols)),
     // WebSocket constructor's protocol field.

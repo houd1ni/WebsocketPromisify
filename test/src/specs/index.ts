@@ -6,6 +6,8 @@ import drops from './drops'
 import close from './close'
 import socket from './socket'
 import ready from './ready'
+import once from './utils_once'
+import existing_socket from './existing_socket'
 
 
 export {
@@ -17,4 +19,6 @@ export {
   close,
   socket,
   ready,
+  once,
+  existing_socket,
 }
