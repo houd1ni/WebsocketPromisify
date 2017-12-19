@@ -10,7 +10,6 @@ jobs:
       - run:
           name: install
           command: |
-            nodejs -v
             apt-get remove nodejs
             apt-get remove npm
             sudo apt-get update && apt-get -y upgrade
