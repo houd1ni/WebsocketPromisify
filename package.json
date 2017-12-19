@@ -65,7 +65,6 @@
     "ci": "npm run lint && npm run test",
     "lint": "./node_modules/.bin/tslint 'src/**/*.ts'",
     "test": "npm run test:compile && npm run test:exec",
-    "ennv": "echo ${CODECOV_TOKEN}",
     "test:compile": "./node_modules/.bin/tsc -p ./test/",
     "test:run": "npm run test:exec && npm run test:report",
     "test:exec": "./node_modules/.bin/nyc ./node_modules/.bin/ava ./test/dist/test/src/index.js",

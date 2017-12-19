@@ -5,15 +5,13 @@ version: 2
 jobs:
   build:
     machine:
-      image: circleci/classic:edge
+      node:
+        version: 9
     steps:
       - checkout
       - run:
           name: node setup
           command: |
-            sudo apt-get update
-            sudo curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -
-            sudo apt-get install -y nodejs
             sudo npm install -g npm
       - run:
           name: prepare tests
@@ -23,8 +21,5 @@ jobs:
       - run:
           name: npm test
           command: |
-            sudo npm run test:exec
-            sudo echo env
-            echo "AAAAA!!!!!!!!"
-            echo env
-            sudo ./node_modules/.bin/nyc report --reporter=json && ./node_modules/.bin/codecov -f coverage/*.json -t ${CODECOV_TOKEN}
+            npm run test:exec
+            ./node_modules/.bin/nyc report --reporter=json && ./node_modules/.bin/codecov -f coverage/*.json -t ${CODECOV_TOKEN}
