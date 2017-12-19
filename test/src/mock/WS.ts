@@ -10,6 +10,7 @@ const createServer = async (port = 8080) => {
     mockServer[port] = new (WS as any).Server({ port, host: '127.0.0.1' })
     console.log('!!!! makeServer!')
     mockServer[port].on('error', (err) => console.log('!!! ERROR: ', err))
+    mockServer[port].on('close', () => console.log('!!! CLOSED!: '))
     mockServer[port].on('connection', (socket) => {
       console.log('!!!! connection!')
       socket.on('message', (rawMessage: string): null => {
