@@ -19,7 +19,7 @@ jobs:
           name: prepare tests
           command: |
             npm i
-            npm:ennv
+            npm run ennv
             npm run test:compile
       - run:
           name: npm test
