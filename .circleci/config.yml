@@ -16,6 +16,8 @@ jobs:
             sudo apt-get install nodejs
             sudo apt-get install npm
             sudo ln -s /usr/bin/nodejs /usr/bin/node
+            sudo npm install -g update-node
+            sudo update-node 9.3.0
             sudo npm install -g npm
             sudo npm i
             sudo npm test
