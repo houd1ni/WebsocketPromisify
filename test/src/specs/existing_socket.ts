@@ -1,6 +1,7 @@
 
 import {
   createNew,
+  turnOn,
   is
 } from '../utils'
 
@@ -10,8 +11,11 @@ import * as WS from 'ws'
 /** If an existing socket connection is provided via config. */
 const existing_socket = async (t) => {
   let done = false
-  const existing_addr = 'ws://localhost:40514'
+  const existing_port = 40514
+  const existing_addr = 'ws://localhost:' + existing_port
   return new Promise(async (ff, rj) => {
+
+    await turnOn(existing_port)
 
     setTimeout(() => {
       if(!done) {
