@@ -17,8 +17,8 @@ export {
   sendBeforeOpen,
   reconnect,
   drops,
-  close, //
-  socket,
-  ready,
-  existing_socket,
+  close,
+  // socket,
+  // ready,
+  // existing_socket,
 }
