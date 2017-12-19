@@ -16,6 +16,6 @@ jobs:
             sudo apt-get install -y nodejs
             sudo npm install -g npm
             sudo npm i
-            sudo npm test:ci:1
-            sudo npm test:ci:2
-            sudo npm test:ci:3
+            sudo npm run test:ci:1
+            sudo npm run test:ci:2
+            sudo npm run test:ci:3
