@@ -4,7 +4,7 @@ version: 2
 
 jobs:
   build:
-    machine:
+    machine: true
     steps:
       - checkout
       - run:
