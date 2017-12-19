@@ -18,11 +18,13 @@ jobs:
       - run:
           name: prepare tests
           command: |
-            sudo -Eiu circleci env | grep CODECOV_TOKEN
-            sudo npm run ennv
             sudo npm i
             sudo npm run test:compile
       - run:
           name: npm test
           command: |
-            sudo npm run test:run
+            sudo npm run test:exec
+            sudo env
+            echo "AAAAA!!!!!!!!"
+            echo env
+            sudo ./node_modules/.bin/nyc report --reporter=json && ./node_modules/.bin/codecov -f coverage/*.json -t ${CODECOV_TOKEN}
