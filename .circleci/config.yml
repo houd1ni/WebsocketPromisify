@@ -14,14 +14,14 @@ jobs:
             sudo apt-get update
             sudo curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -
             sudo apt-get install -y nodejs
-            npm install -g npm
+            sudo npm install -g npm
       - run:
           name: prepare tests
           command: |
-            npm i
-            npm run ennv
-            npm run test:compile
+            sudo npm i
+            sudo npm run ennv
+            sudo npm run test:compile
       - run:
           name: npm test
           command: |
-            npm run test:run
+            sudo npm run test:run
