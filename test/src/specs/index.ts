@@ -9,6 +9,7 @@ import ready from './ready'
 import once from './utils_once'
 import existing_socket from './existing_socket'
 
+// addresses in use: 40510 - 40514
 
 export {
   once,
@@ -20,5 +21,5 @@ export {
   close,
   socket,
   ready,
-  // existing_socket,
+  existing_socket,
 }
