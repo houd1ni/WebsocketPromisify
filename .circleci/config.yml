@@ -4,20 +4,24 @@ version: 2
 
 jobs:
   build:
-    docker:
-      - image: node:9.3.0
+    machine: true
     steps:
       - checkout
       - run:
           name: install
           command: |
-            su apt-get update && apt-get -y upgrade
-            su curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -
-            su apt-get install -y nodejs
-            su npm install -g npm
+            nodejs -v
+            apt-get remove nodejs
+            apt-get remove npm
+            sudo apt-get update && apt-get -y upgrade
+            curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -
+            sudo apt-get install -y nodejs
+            sudo npm install -g npm
       - run:
           name: node setup
           command: |
+            nodejs -v
+            npm -v
             npm i -g npm
       - run:
           name: prepare tests
