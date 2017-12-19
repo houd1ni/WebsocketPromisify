@@ -6,23 +6,14 @@ jobs:
   build:
     machine:
       image: circleci/classic:edge
-    parallelism: 2
     steps:
       - checkout
       - run:
           name: npm i & npm test
           command: |
-              sudo apt-get update
-              sudo curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -
-              sudo apt-get install -y nodejs
-              sudo npm install -g npm
-              sudo npm i
-      - run:
-          parallel: true
-          command: |
-            sudo npm run test:ci:1
-            sudo npm run test:ci:2
-      - run:
-          parallel: true
-          command: |
-            sudo npm run test:ci:3
+            sudo apt-get update
+            sudo curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -
+            sudo apt-get install -y nodejs
+            sudo npm install -g npm
+            sudo npm i
+            sudo npm test
