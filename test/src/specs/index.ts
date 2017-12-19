@@ -11,14 +11,14 @@ import existing_socket from './existing_socket'
 
 
 export {
+  once,
   echo,
   lazy,
-  sendBeforeOpen,
-  reconnect,
-  drops,
-  close,
-  socket,
-  ready,
-  once,
-  existing_socket,
+  // sendBeforeOpen,
+  // reconnect,
+  // drops,
+  // close,
+  // socket,
+  // ready,
+  // existing_socket,
 }
