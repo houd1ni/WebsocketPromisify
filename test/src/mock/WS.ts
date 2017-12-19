@@ -9,14 +9,9 @@ const createServer = async (port = 40510) => {
   return new Promise((ff, rj) => {
     if(mockServer[port] === undefined) {
       mockServer[port] = new (WS as any).Server({ port }, () => {
-        console.log('!!!! makeServer!')
-        mockServer[port].on('error', (err) => console.log('!!! ERROR: ', err))
-        mockServer[port].on('close', () => console.log('!!! CLOSED!: '))
         mockServer[port].on('connection', (socket) => {
-          console.log('!!!! connection!')
           socket.on('message', (rawMessage: string): null => {
             const {id, data} = JSON.parse(rawMessage)
-            // console.log(rawMessage)
             let response = ''
             if(data.shut) {
               socket.terminate()

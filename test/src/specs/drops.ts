@@ -11,9 +11,9 @@ const drops = async (t) => {
   return new Promise(async (ff, rj) => {
     const ws = await createNew({
       timeout: 500
-    }, 40513)
+    }, 40512)
 
-    await shutDown(40513)
+    await shutDown(40512)
 
     setTimeout(async () => {
       const msg = {echo: true, msg: 'hello!'}

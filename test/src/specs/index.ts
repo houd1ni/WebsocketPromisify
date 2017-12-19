@@ -16,7 +16,7 @@ export {
   lazy,
   sendBeforeOpen,
   reconnect,
-  // drops,
+  drops,
   // close,
   // socket,
   // ready,
