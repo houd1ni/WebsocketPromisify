@@ -31,4 +31,4 @@ jobs:
             nodejs -v
             npm -v
             npm run test:exec
-            ./node_modules/.bin/nyc report --reporter=json && ./node_modules/.bin/codecov -f coverage/*.json -t ${CODECOV_TOKEN}
+            ./node_modules/.bin/nyc report --reporter=json && ./node_modules/.bin/codecov -f coverage/*.json
