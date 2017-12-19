@@ -12,13 +12,13 @@ import existing_socket from './existing_socket'
 
 export {
   echo,
-  // lazy,
-  // sendBeforeOpen,
-  // reconnect,
-  // drops,
-  // close,
-  // socket,
-  // ready,
+  lazy,
+  sendBeforeOpen,
+  reconnect,
+  drops,
+  close,
+  socket,
+  ready,
   once,
-  // existing_socket,
+  existing_socket,
 }
