@@ -24,7 +24,7 @@ jobs:
           name: npm test
           command: |
             sudo npm run test:exec
-            sudo env
+            sudo echo env
             echo "AAAAA!!!!!!!!"
             echo env
             sudo ./node_modules/.bin/nyc report --reporter=json && ./node_modules/.bin/codecov -f coverage/*.json -t ${CODECOV_TOKEN}
