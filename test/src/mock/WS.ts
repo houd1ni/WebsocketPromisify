@@ -8,7 +8,10 @@ let mockServer: {[port: string]: any} = {}
 const createServer = async (port = 8080) => {
   if(mockServer[port] === undefined) {
     mockServer[port] = new (WS as any).Server({ port })
+    console.log('!!!! makeServer!')
+    mockServer[port].on('error', (err) => console.log('!!! ERROR: ', err))
     mockServer[port].on('connection', (socket) => {
+      console.log('!!!! connection!')
       socket.on('message', (rawMessage: string): null => {
         const {id, data} = JSON.parse(rawMessage)
         // console.log(rawMessage)
@@ -34,7 +37,7 @@ const createServer = async (port = 8080) => {
   }
 }
 
-const killServer = async (port = 6666) => {
+const killServer = async (port = 8080) => {
   return new Promise((ff, rj) => {
     if(mockServer[port]) {
       mockServer[port].close(() => {

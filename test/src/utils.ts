@@ -5,19 +5,19 @@ import * as WS from 'ws'
 
 
 const turnOn = async (port: number) => {
-  await axios.get('http://localhost:8085/on/' + port)
+  await axios.get('http://127.0.0.1:8085/on/' + port)
   return true
 }
 
 const shutDown = async (port: number) => {
-  await axios.get('http://localhost:8085/off/' + port)
+  await axios.get('http://127.0.0.1:8085/off/' + port)
   return true
 }
 
 const createNew = async (config, port = 8080): Promise<WSP> => {
   await turnOn(port)
   const ws = new WSP(Object.assign({
-    url: 'localhost:' + port,
+    url: '127.0.0.1:' + port,
     adapter: (host, protocols) => new (WS as any)(host, protocols)
   }, config))
 

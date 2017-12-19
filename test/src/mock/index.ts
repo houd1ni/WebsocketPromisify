@@ -10,7 +10,7 @@ export default async () => {
   
   const app = express()
 
-  const getPort = (req) => +req.originalUrl.split('/')[2] || 6666
+  const getPort = (req) => +req.originalUrl.split('/')[2] || 8080
 
   app.get(/\/on\/.*/, async (req, res) => {
     const port = getPort(req)
