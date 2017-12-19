@@ -5,8 +5,7 @@ version: 2
 jobs:
   build:
     machine:
-      node:
-        version: 9
+      image: circleci/node:9.3.0
     steps:
       - checkout
       - run:
