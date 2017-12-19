@@ -18,9 +18,9 @@ jobs:
       - run:
           name: prepare tests
           command: |
-            sudo npm i
-            sudo npm run test:compile
+            npm i
+            npm run test:compile
       - run:
           name: npm test
           command: |
-            sudo npm run test:run
+            npm run test:run
