@@ -5,7 +5,7 @@ import * as WS from 'ws'
 
 
 const turnOn = async (port: number) => {
-  console.log(await axios.get('http://127.0.0.1:8085/on/' + port))
+  await axios.get('http://127.0.0.1:8085/on/' + port)
   return true
 }
 
