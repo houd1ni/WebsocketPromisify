@@ -1,4 +1,7 @@
 # WebsocketPromisify
+
+[![Build Status](https://circleci.com/gh/houd1ni/WebsocketPromisify/tree/master.svg?style=shield)](https://circleci.com/gh/houd1ni/WebsocketPromisify/tree/master)
+
 Makes websocket's API just like REST with Promise-like API, with native Promises.
 Has a lot of yummies and very lightweight (less than 5kb in gzip)!
 
