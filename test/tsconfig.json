@@ -10,6 +10,7 @@
     "outDir": "./dist"
   },
   "files": [
-    "./src/index.ts"
+    "./src/index.ts",
+    "./src/mock.ts"
   ]
 }

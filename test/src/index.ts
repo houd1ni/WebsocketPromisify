@@ -1,7 +1,7 @@
 import test from 'ava'
 import * as specs from './specs'
 // import mockServer from './mock/index'
-import mock from './mock'
+// import mock from './mock'
 import * as _ from 'ramda'
 
 
