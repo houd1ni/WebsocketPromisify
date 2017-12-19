@@ -10,7 +10,7 @@ import { setTimeout } from 'timers';
 
 /** Reconnects if connection is broken. */
 const reconnect = async (t) => {
-  const port = 6667
+  const port = 8082
 
   return new Promise(async (ff, rj) => {
     const ws = await createNew({

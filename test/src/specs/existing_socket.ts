@@ -10,7 +10,7 @@ import * as WS from 'ws'
 /** If an existing socket connection is provided via config. */
 const existing_socket = async (t) => {
   let done = false
-  const existing_addr = 'ws://localhost:6666'
+  const existing_addr = 'ws://localhost:8080'
   return new Promise(async (ff, rj) => {
 
     setTimeout(() => {

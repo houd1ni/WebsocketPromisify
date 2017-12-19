@@ -14,7 +14,7 @@ const shutDown = async (port: number) => {
   return true
 }
 
-const createNew = async (config, port = 6666): Promise<WSP> => {
+const createNew = async (config, port = 8080): Promise<WSP> => {
   await turnOn(port)
   const ws = new WSP(Object.assign({
     url: 'localhost:' + port,

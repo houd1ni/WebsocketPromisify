@@ -5,7 +5,7 @@ import * as WS from 'ws'
 let mockServer: {[port: string]: any} = {}
 
 
-const createServer = async (port = 6666) => {
+const createServer = async (port = 8080) => {
   if(mockServer[port] === undefined) {
     mockServer[port] = new (WS as any).Server({ port })
     mockServer[port].on('connection', (socket) => {
