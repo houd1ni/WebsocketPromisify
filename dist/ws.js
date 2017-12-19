@@ -79,11 +79,121 @@ var SHA1 = (str1) => {
   return str1;
 };
 
+const add_event = (o, e, handler) => {
+    return o.addEventListener(e, handler);
+};
+const once = (fn) => {
+    let has_been_cached = false;
+    let cached = null;
+    return (...args) => {
+        if (has_been_cached) {
+            return cached;
+        }
+        else {
+            has_been_cached = true;
+            return cached = fn(...args);
+        }
+    };
+};
+
+const init = function (ws) {
+    const config = this.config;
+    this.open = true;
+    this.onReadyQueue.forEach((fn) => fn());
+    this.onReadyQueue = [];
+    const { id_key, data_key } = config.server;
+    // Send all pending messages.
+    this.messages.forEach((message) => message.send());
+    // It's reconnecting.
+    if (this.reconnect_timeout !== null) {
+        clearInterval(this.reconnect_timeout);
+        this.reconnect_timeout = null;
+    }
+    add_event(ws, 'close', (e) => __awaiter(this, void 0, void 0, function* () {
+        this.log('Closed.');
+        this.open = false;
+        this.onCloseQueue.forEach((fn) => fn());
+        this.onCloseQueue = [];
+        // Auto reconnect.
+        const reconnect = config.reconnect;
+        if (typeof reconnect === 'number' &&
+            !isNaN(reconnect) &&
+            !this.forcibly_closed) {
+            const reconnectFunc = () => __awaiter(this, void 0, void 0, function* () {
+                this.log('Trying to reconnect...');
+                if (this.ws !== null) {
+                    this.ws.close();
+                    this.ws = null;
+                }
+                // If some error occured, try again.
+                const status = yield this.connect();
+                if (status !== null) {
+                    this.reconnect_timeout = setTimeout(reconnectFunc, reconnect * 1000);
+                }
+            });
+            // No need for await.
+            reconnectFunc();
+        }
+        else {
+            this.ws = null;
+            this.open = null;
+        }
+        // reset the flag to reuse.
+        this.forcibly_closed = false;
+    }));
+    add_event(ws, 'message', (e) => {
+        try {
+            const data = JSON.parse(e.data);
+            if (data[id_key]) {
+                const q = this.queue[data[id_key]];
+                if (q) {
+                    // Debug, Log.
+                    const time = q.sent_time ? (Date.now() - q.sent_time) : null;
+                    this.log('Message.', data[data_key], time);
+                    // Play.
+                    q.ff(data[data_key]);
+                    clearTimeout(q.timeout);
+                    delete this.queue[data[id_key]];
+                }
+            }
+        }
+        catch (err) {
+            console.error(err, `JSON.parse error. Got: ${e.data}`);
+        }
+    });
+};
+// ---------------------------------------------------------------------------
+const connectLib = function (ff) {
+    if (this.open === true) {
+        return ff(1);
+    }
+    const config = this.config;
+    const ws = config.socket || config.adapter(`ws://${config.url}`, config.protocols);
+    this.ws = ws;
+    add_event(ws, 'error', once((e) => {
+        this.ws = null;
+        this.log('Error status 3.');
+        // Some network error: Connection refused or so.
+        return ff(3);
+    }));
+    // Because 'open' won't be envoked on opened socket.
+    if (config.socket && ws.readyState === 1) {
+        init.call(this, ws);
+        ff(null);
+    }
+    else {
+        add_event(ws, 'open', once((e) => {
+            this.log('Opened.');
+            init.call(this, ws);
+            return ff(null);
+        }));
+    }
+};
+
 /*  .send(your_data) wraps request to server with {id: `hash`, data: `actually your data`},
     returns a Promise, that will be rejected after a timeout or
     resolved if server returns the same signature: {id: `same_hash`, data: `response data`}
 */
-const add_event = (o, e, handler) => o.addEventListener(e, handler);
 const sett = (a, b) => setTimeout(b, a);
 const default_config = {
     data_type: 'json',
@@ -95,6 +205,7 @@ const default_config = {
     timeout: 1400,
     reconnect: 2,
     lazy: false,
+    socket: null,
     adapter: ((host, protocols) => new WebSocket(host, protocols)),
     protocols: [],
     server: {
@@ -110,6 +221,8 @@ class WebSocketClient {
         this.reconnect_timeout = null;
         this.queue = {};
         this.messages = [];
+        this.onReadyQueue = [];
+        this.onCloseQueue = [];
         this.config = {};
         // Config.
         const config = {};
@@ -148,81 +261,22 @@ class WebSocketClient {
     connect() {
         return __awaiter(this, void 0, void 0, function* () {
             return new Promise((ff, rj) => {
-                if (this.open === true) {
-                    return ff(1);
+                connectLib.call(this, ff);
+            });
+        });
+    }
+    get socket() {
+        return this.ws;
+    }
+    ready() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return new Promise((ff, rj) => {
+                if (this.open) {
+                    return true;
                 }
-                const config = this.config;
-                const ws = config.adapter(`ws://${config.url}`, config.protocols);
-                this.ws = ws;
-                add_event(ws, 'error', (e) => {
-                    this.ws = null;
-                    this.log('Error status 3.');
-                    // Some network error: Connection refused or so.
-                    return ff(3);
-                });
-                add_event(ws, 'open', (e) => {
-                    this.log('Opened.');
-                    this.open = true;
-                    const { id_key, data_key } = config.server;
-                    // Send all pending messages.
-                    this.messages.forEach((message) => message.send());
-                    // It's reconnecting.
-                    if (this.reconnect_timeout !== null) {
-                        clearInterval(this.reconnect_timeout);
-                        this.reconnect_timeout = null;
-                    }
-                    add_event(ws, 'close', (e) => __awaiter(this, void 0, void 0, function* () {
-                        this.log('Closed.');
-                        this.open = false;
-                        // Auto reconnect.
-                        const reconnect = config.reconnect;
-                        if (typeof reconnect === 'number' &&
-                            !isNaN(reconnect) &&
-                            !this.forcibly_closed) {
-                            const reconnectFunc = () => __awaiter(this, void 0, void 0, function* () {
-                                this.log('Trying to reconnect...');
-                                if (this.ws !== null) {
-                                    this.ws.close();
-                                    this.ws = null;
-                                }
-                                // If some error occured, try again.
-                                const status = yield this.connect();
-                                if (status !== null) {
-                                    this.reconnect_timeout = setTimeout(reconnectFunc, reconnect * 1000);
-                                }
-                            });
-                            // No need for await.
-                            reconnectFunc();
-                        }
-                        else {
-                            this.ws = null;
-                            this.open = null;
-                        }
-                        // reset the flag to reuse.
-                        this.forcibly_closed = false;
-                    }));
-                    add_event(ws, 'message', (e) => {
-                        try {
-                            const data = JSON.parse(e.data);
-                            if (data[id_key]) {
-                                const q = this.queue[data[id_key]];
-                                if (q) {
-                                    // Debug, Log.
-                                    const time = q.sent_time ? (Date.now() - q.sent_time) : null;
-                                    this.log('Message.', data[data_key], time);
-                                    // Play.
-                                    q.ff(data[data_key]);
-                                    clearTimeout(q.timeout);
-                                    delete this.queue[data[id_key]];
-                                }
-                            }
-                        }
-                        catch (err) {
-                            console.error(err, `JSON.parse error. Got: ${e.data}`);
-                        }
-                    });
-                    return ff(null);
-                });
+                else {
+                    this.onReadyQueue.push(ff);
+                }
             });
         });
     }
@@ -234,12 +288,23 @@ class WebSocketClient {
         });
     }
     close() {
-        this.init_flush();
-        this.open = null;
-        this.ws.close();
-        this.ws = null;
-        this.forcibly_closed = true;
-        return null;
+        return __awaiter(this, void 0, void 0, function* () {
+            return new Promise((ff, rj) => {
+                if (this.ws === null) {
+                    rj('WSP: closing a non-inited socket!');
+                }
+                else {
+                    this.open = null;
+                    this.onCloseQueue.push(() => {
+                        this.init_flush();
+                        this.ws = null;
+                        this.forcibly_closed = true;
+                        ff();
+                    });
+                    this.ws.close();
+                }
+            });
+        });
     }
     send(user_message, opts = {}) {
         return __awaiter(this, void 0, void 0, function* () {
