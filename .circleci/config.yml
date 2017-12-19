@@ -9,13 +9,13 @@ jobs:
     steps:
       - checkout
       - run:
-        name: npm i & npm test
-        command: |
-          sudo apt-get update
-          sudo curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -
-          sudo apt-get install -y nodejs
-          sudo npm install -g npm
-          sudo npm i
+          name: npm i & npm test
+          command: |
+              sudo apt-get update
+              sudo curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -
+              sudo apt-get install -y nodejs
+              sudo npm install -g npm
+              sudo npm i
       - run:
           parallel: true
           command: |
