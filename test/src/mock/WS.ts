@@ -7,7 +7,7 @@ let mockServer: {[port: string]: any} = {}
 
 const createServer = async (port = 8080) => {
   if(mockServer[port] === undefined) {
-    mockServer[port] = new (WS as any).Server({ port, host: '127.0.0.1' })
+    mockServer[port] = new (WS as any).Server({ port })
     console.log('!!!! makeServer!')
     mockServer[port].on('error', (err) => console.log('!!! ERROR: ', err))
     mockServer[port].on('close', () => console.log('!!! CLOSED!: '))

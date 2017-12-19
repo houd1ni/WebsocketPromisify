@@ -64,8 +64,12 @@
   "scripts": {
     "ci": "npm run lint && npm run test",
     "lint": "./node_modules/.bin/tslint 'src/**/*.ts'",
+    "test:ci:1": "npm run test:compile",
+    "test:ci:2": "npm run test:mock",
+    "test:ci:3": "npm run test:run",
     "test": "npm run test:compile && npm run test:run",
     "test:compile": "./node_modules/.bin/tsc -p ./test/",
+    "test:mock": "nodejs ./test/dist/test/src/mock.js",
     "test:run": "./node_modules/.bin/ava ./test/dist/test/src/index.js",
     "dev": "rollup --watch -c --config src/rollup.config.js --environment INCLUDE_DEPS,BUILD:development",
     "prod:cjs": "rollup -c --config src/rollup.config.js --environment INCLUDE_DEPS,BUILD:cjs",
