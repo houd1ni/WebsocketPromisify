@@ -1,5 +1,5 @@
 
-import WSP from '../../src/WS'
+import WSP from '../../dist/ws.esm'
 import axios from 'axios'
 import * as WS from 'ws'
 
