@@ -1,4 +1,16 @@
 
+version: 2
+
 machine:
   node:
     version: 8.2.0
+
+jobs:
+  build:
+    steps:
+      - checkout
+      - run:
+          name: npm i & npm test
+          command: |
+            npm i
+            npm test
