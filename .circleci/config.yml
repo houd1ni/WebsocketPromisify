@@ -12,6 +12,7 @@ jobs:
       - run:
           name: npm i & npm test
           command: |
+            sudo apt-get update
             sudo apt-get install nodejs
             sudo nvm install 9.3.0
             sudo nvm use 9.3.0
