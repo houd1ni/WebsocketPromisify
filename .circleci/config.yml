@@ -19,8 +19,8 @@ jobs:
           name: prepare tests
           command: |
             sudo -Eiu circleci env | grep CODECOV_TOKEN
-            sudo npm i
             sudo npm run ennv
+            sudo npm i
             sudo npm run test:compile
       - run:
           name: npm test
