@@ -18,7 +18,7 @@ export {
   reconnect,
   drops,
   close,
-  // socket,
+  socket,
   // ready,
   // existing_socket,
 }
