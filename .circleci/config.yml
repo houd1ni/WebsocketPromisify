@@ -16,7 +16,10 @@ jobs:
             sudo apt-get install -y nodejs
             sudo npm install -g npm
       - run:
-          name: npm i & npm test
+          name: npm i
           command: |
             sudo npm i
+      - run:
+          name: npm test
+          command: |
             sudo npm test
