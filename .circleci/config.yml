@@ -11,7 +11,7 @@ jobs:
       - run:
           name: node setup
           command: |
-            nodejs
+            nodejs -v
             npm i -g npm
       - run:
           name: prepare tests
