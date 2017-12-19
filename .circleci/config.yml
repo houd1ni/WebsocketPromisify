@@ -6,7 +6,7 @@ jobs:
   build:
     machine:
       node:
-        version: 8.2.0
+        version: 9.3.0
     steps:
       - checkout
       - run:
