@@ -1,13 +1,12 @@
 
 version: 2
 
-machine:
-  node:
-    version: 8.2.0
-
 
 jobs:
   build:
+    machine:
+      node:
+        version: 8.2.0
     steps:
       - checkout
       - run:
