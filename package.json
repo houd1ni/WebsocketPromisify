@@ -68,7 +68,7 @@
     "test:compile": "./node_modules/.bin/tsc -p ./test/",
     "test:run": "npm run test:exec && npm run test:report",
     "test:exec": "./node_modules/.bin/nyc ./node_modules/.bin/ava ./test/dist/test/src/index.js",
-    "test:report": "./node_modules/.bin/nyc report --reporter=json && ./node_modules/.bin/codecov -f coverage/*.json -t (echo $CODECOV_TOKEN)",
+    "test:report": "./node_modules/.bin/nyc report --reporter=json && ./node_modules/.bin/codecov -f coverage/*.json -t ${CODECOV_TOKEN}",
     "dev": "rollup --watch -c --config src/rollup.config.js --environment INCLUDE_DEPS,BUILD:development",
     "prod:cjs": "rollup -c --config src/rollup.config.js --environment INCLUDE_DEPS,BUILD:cjs",
     "prod:es": "rollup -c --config src/rollup.config.js --environment INCLUDE_DEPS,BUILD:es",
