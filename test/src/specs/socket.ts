@@ -16,6 +16,8 @@ const sockets = async (t) => {
   } else {
     t.fail()
   }
+
+  return null
 }
 
 

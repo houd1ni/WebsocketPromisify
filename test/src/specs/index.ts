@@ -19,6 +19,6 @@ export {
   drops,
   close,
   socket,
-  // ready,
+  ready,
   // existing_socket,
 }
