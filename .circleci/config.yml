@@ -11,7 +11,7 @@ jobs:
       - run:
           name: node setup
           command: |
-            sudo npm install -g npm
+            npm i -g npm
       - run:
           name: prepare tests
           command: |
