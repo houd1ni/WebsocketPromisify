@@ -11,9 +11,11 @@ import * as _ from 'ramda'
 	// await mockServer()
 
 	// console.log('Mock Server launched.')
-	
-	_.forEachObjIndexed((spec, name) => {
-		test(name, spec)
-	})(specs)
+	setTimeout(() => {
+		_.forEachObjIndexed((spec, name) => {
+			test(name, spec)
+		})(specs)
+	}, 7e3)
+
 
 })()
