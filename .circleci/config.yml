@@ -21,8 +21,8 @@ jobs:
           parallel: true
           command: |
             sudo npm run test:ci:1
+            sudo npm run test:ci:2
       - run:
           parallel: true
           command: |
-            sudo npm run test:ci:2
             sudo npm run test:ci:3

@@ -15,7 +15,7 @@ import * as _ from 'ramda'
 		_.forEachObjIndexed((spec, name) => {
 			test(name, spec)
 		})(specs)
-	}, 7e3)
+	}, 10e3)
 
 
 })()
