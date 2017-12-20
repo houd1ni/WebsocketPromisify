@@ -28,5 +28,6 @@ jobs:
           command: |
             nodejs -v
             npm -v
+            npm run lint
             npm run test:exec
             ./node_modules/.bin/nyc report --reporter=json && ./node_modules/.bin/codecov -f coverage/*.json
