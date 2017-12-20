@@ -7,7 +7,7 @@ a nice this readme version: https://houd1ni.github.io/WebsocketPromisify/
 Makes websocket's API just like REST with Promise-like API, with native Promises.
 Has a lot of yummies and very lightweight (less than 5kb in gzip)!
 
-// If you detected some bug, wants or some stuff to be added, feel free to open an issue!
+// If you detected some bug, want some stuff to be added, feel free to open an issue!
 Large data support (chunking), plugins, streams and different server-side implementations are coming.
 To see a Node.js server-side part example, please, take a look on test/mock in github repo.
 
@@ -27,7 +27,7 @@ Features (almost all are tunable via constructor config below.)
 - Can log messages/frames/response time into console or wherever you want to. (Hello, firefox 57+!)
 - Any protocols field.
 - Rejects if sent into closed socket or after some timeout without response.
-- If something sent before connection is estabilished, it sends when its ready.
+- If something sent before connection is estabilished, it sends when it's ready.
 
 How it on Server Side ?
 ```
@@ -49,7 +49,7 @@ Default constructor config is
   // Set up.
     // Required. URL to connect.
     url: 'localhost',
-    // Timeout after sending a message before it dropes with error.
+    // Timeout after sending a message before it drops with error.
     timeout: 1400,
     // Reconnect timeout in seconds or null.
     reconnect: 2,
@@ -115,7 +115,7 @@ Example:
 
     try {
       // You can wait for ready by calling await ws.ready() or send it right now:
-      // the messages will be sent as soon as the connection opened.
+      // the messages will be sent as soon as the connection is opened.
       const data = await ws.send({catSaid: 'Meow!'})
       console.log({data})
     } catch(error) {
