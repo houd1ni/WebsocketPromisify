@@ -1,9 +1,9 @@
 
 
-export = WebSocketClient
+export = wsc
 
 
-declare namespace WebSocketClient {
+declare namespace wsc {
 
   /** Stuff that in use by this lib. */
   interface Socket {
@@ -12,6 +12,8 @@ declare namespace WebSocketClient {
     close()
     addEventListener(event: string, handler: ((event: any) => any), ...any: any[])
   }
+
+  export type AsyncErrCode = Promise<number | null | {}>
   
   export type EventHandler = (e: any) => void
 
@@ -41,16 +43,15 @@ declare namespace WebSocketClient {
     top: any,
     data_type: DataType
   }
-}
 
-
-declare class WebSocketClient {
-  on(
-    event_name: string,
-    handler: (event: string) => void,
-    predicate?: (event: string) => boolean
-  )
-  close(): Promise<void>
-  send(user_message, opts: WebSocketClient.SendOptions): Promise<number | null>
-  constructor(user_config: WebSocketClient.UserConfig)
+  export class WebSocketClient {
+    on(
+      event_name: string,
+      handler: (event: string) => void,
+      predicate?: (event: string) => boolean
+    )
+    close(): Promise<void | {}>
+    send(user_message: any, opts: wsc.SendOptions): AsyncErrCode
+    constructor(user_config: wsc.UserConfig)
+  }
 }

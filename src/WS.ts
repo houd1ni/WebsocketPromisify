@@ -32,7 +32,7 @@ const default_config = <types.Config>{
 }
 
 
-class WebSocketClient implements WebSocketClient {
+class WebSocketClient implements types.WebSocketClient {
 
   private open = null
   private ws = null
@@ -91,7 +91,7 @@ class WebSocketClient implements WebSocketClient {
     })
   }
 
-  public async close() {
+  public async close(): types.AsyncErrCode {
     return new Promise((ff, rj) => {
       if(this.ws === null) {
         rj('WSP: closing a non-inited socket!')
@@ -108,7 +108,7 @@ class WebSocketClient implements WebSocketClient {
     })
   }
 
-  public async send(user_message, opts = <types.SendOptions>{}) {
+  public async send(user_message, opts = <types.SendOptions>{}): types.AsyncErrCode {
     this.log('Send.', user_message)
     const config   = this.config
     const message  = {}
