@@ -1,8 +1,8 @@
 import commonjs from 'rollup-plugin-commonjs'
 import resolve from 'rollup-plugin-node-resolve'
 import typescript from 'rollup-plugin-typescript2'
-import sourcemaps from 'rollup-plugin-sourcemaps'
-
+import * as uglifyES from 'uglify-es'
+import { uglify } from 'rollup-plugin-uglify'
 
 export default {
   input: 'src/WS.ts',
@@ -25,6 +25,6 @@ export default {
         }
       }
     }),
-    sourcemaps(),
+    uglify({}, uglifyES.minify)
   ]
 }

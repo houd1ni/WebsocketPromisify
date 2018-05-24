@@ -18,9 +18,10 @@ Features (almost all are tunable via constructor config below.)
 - ES-module and commonjs built-in.
 - Types (d.ts) included.
 - Automatically reconnects.
-- You can use the WebSocket (or your ws-like implementation) further in other stuff (socket property).
+- You can usEncodere the WebSocket (or your ws-like implementation) further in other stuff (socket property).
 - And provide your own socket instance via socket config prop.
 - Any id and data keys to negotiate with your back-end.
+- Any (serialiser)/Decoder(deserialiser).
 - Lazy connect: connects only if something sent, then send all of them!
 - Supports middleware-adapter. E.g. you can use 'ws' package in Node!
 - Custom easy .on method with or without condition: analog to .addEventListener.
@@ -32,8 +33,10 @@ Features (almost all are tunable via constructor config below.)
 How it on Server Side ?
 ```
   1. Serialized JSON is sent by this lib = {id: 'generated_id', data: your data}
+     ... or some entity from your .encode function(message_id, message_data)
   2. Some Server processing...
   3. Serialized JSON is sent back by the Server = {id: 'the same generated_id', data: feedback data}
+     ... or some entity that could be parsed by your .decode function(raw_data)
 ```
 
 
@@ -59,6 +62,12 @@ Default constructor config is
     socket: null,
     // You can set your own middleware here.
     adapter: ((host, protocols) => new WebSocket(host, protocols)),
+    // You can replace original serialisation to your own or even binary stuff.
+    encode: (message_id, message_data, config) => data,
+    // You can replace original deserialisation to your own or even
+    //     making the message object from binary data.
+    //     id_key and data_key could be taken from the config argument.
+    decode: (raw_message) => { message_id, message_data },
     // WebSocket constructor's protocol field.
     protocols: [],
     // Unique id's and data keys to negotiate with back-end.

@@ -208,6 +208,7 @@ const default_config = {
     socket: null,
     adapter: ((host, protocols) => new WebSocket(host, protocols)),
     protocols: [],
+    pipes: [],
     server: {
         id_key: 'id',
         data_key: 'data'
@@ -323,11 +324,14 @@ class WebSocketClient {
                 }
                 Object.assign(message, opts.top);
             }
+            config.pipes.forEach((pipe) => message[data_key] = pipe(message[data_key]));
             if (this.open === true) {
                 this.ws.send(JSON.stringify(message));
             }
             else if (this.open === false || first_time_lazy) {
-                this.messages.push({ send: () => this.ws.send(JSON.stringify(message)) });
+                this.messages.push({
+                    send: () => this.ws.send(JSON.stringify(message))
+                });
                 if (first_time_lazy) {
                     this.connect();
                 }

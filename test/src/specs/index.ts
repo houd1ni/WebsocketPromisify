@@ -21,5 +21,5 @@ export {
   close,
   socket,
   ready,
-  existing_socket,
+  existing_socket
 }

@@ -57,7 +57,7 @@ const init = function(ws: types.Socket) {
 
   add_event(ws, 'message', (e) => {
     try {
-      const data = JSON.parse(e.data)
+      const data = config.decode(e.data)
       if(data[id_key]) {
         const q = this.queue[data[id_key]]
         if(q) {
@@ -71,7 +71,7 @@ const init = function(ws: types.Socket) {
         }
       }
     } catch (err) {
-      console.error(err, `JSON.parse error. Got: ${e.data}`)
+      console.error(err, `Decode error. Got: ${e.data}`)
     }
   })
 }
@@ -105,7 +105,6 @@ const connectLib = function(ff) {
       return ff(null)
     }))
   }
-
 }
 
 

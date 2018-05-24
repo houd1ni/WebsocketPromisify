@@ -24,7 +24,13 @@ const default_config = <types.Config>{
   lazy: false,
   socket: null,
   adapter: ((host, protocols) => new WebSocket(host, protocols)),
+  encode: (key, data, { server }) => JSON.stringify({
+    [server.id_key]: key,
+    [server.data_key]: data
+  }),
+  decode: (rawMessage) => JSON.parse(rawMessage),
   protocols: [],
+  pipes: [],
   server: {
     id_key: 'id',
     data_key: 'data'
@@ -108,17 +114,15 @@ class WebSocketClient implements types.WebSocketClient {
     })
   }
 
-  public async send(user_message, opts = <types.SendOptions>{}): types.AsyncErrCode {
-    this.log('Send.', user_message)
+  public async send(message_data, opts = <types.SendOptions>{}): types.AsyncErrCode {
+    this.log('Send.', message_data)
     const config   = this.config
     const message  = {}
     const id_key   = config.server.id_key
     const data_key = config.server.data_key
     const first_time_lazy = config.lazy && !this.open
-    // const data_type  = opts.data_type || config.data_type
 
-    message[data_key] = user_message // is_json ? JSON.stringify(user_message
-    message[id_key]   = SHA1('' + ((Math.random()*1e5)|0)).slice(0, 20)
+    const message_id = SHA1('' + ((Math.random()*1e5)|0)).slice(0, 20)
     if(typeof opts.top === 'object') {
       if(opts.top[data_key]) {
         throw new Error('Attempting to set data key/token via send() options!')
@@ -126,10 +130,16 @@ class WebSocketClient implements types.WebSocketClient {
       Object.assign(message, opts.top)
     }
 
+    config.pipes.forEach(
+      (pipe) => message_data = pipe(message_data)
+    )
+
     if(this.open === true) {
-      this.ws.send(JSON.stringify(message))
+      this.ws.send(config.encode(message_id, message_data, config))
     } else if(this.open === false || first_time_lazy) {
-      this.messages.push({send: () => this.ws.send(JSON.stringify(message))})
+      this.messages.push({
+        send: () => this.ws.send(config.encode(message_id, message_data, config))
+      })
       if(first_time_lazy) {
         this.connect()
       }
@@ -138,17 +148,17 @@ class WebSocketClient implements types.WebSocketClient {
     }
 
     return new Promise((ff, rj) => {
-      this.queue[message[id_key]] = {
+      this.queue[message_id] = {
         ff,
         data_type: config.data_type,
         sent_time: config.timer ? Date.now() : null,
         timeout: sett(config.timeout, () => {
-          if(this.queue[message[id_key]]) {
+          if(this.queue[message_id]) {
             rj({
               'Websocket timeout expired: ': config.timeout,
               'for the message': message
             })
-            delete this.queue[message[id_key]]
+            delete this.queue[message_id]
           }
         })
       }
