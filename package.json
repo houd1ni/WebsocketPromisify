@@ -1,33 +1,4 @@
 {
-  "_args": [
-    [
-      "wspromisify@0.0.5",
-      "C:\\Users\\m.akiliev\\go\\workspace\\klb\\view"
-    ]
-  ],
-  "_from": "wspromisify@0.0.5",
-  "_id": "wspromisify@0.0.5",
-  "_inBundle": false,
-  "_integrity": "sha512-wWSjaaNK9B3wOYyw5DWhPq+AGRFx+4qBs0bbazPkNPwWwXnNLBcthnEBSZdyhqx8SGulRzV8DzH8IcUd9DbYsw==",
-  "_location": "/wspromisify",
-  "_phantomChildren": {},
-  "_requested": {
-    "type": "version",
-    "registry": true,
-    "raw": "wspromisify@0.0.5",
-    "name": "wspromisify",
-    "escapedName": "wspromisify",
-    "rawSpec": "0.0.5",
-    "saveSpec": null,
-    "fetchSpec": "0.0.5"
-  },
-  "_requiredBy": [
-    "/"
-  ],
-  "_resolved": "https://registry.npmjs.org/wspromisify/-/wspromisify-0.0.5.tgz",
-  "_shasum": "6cf45bd945835d95ed2b0dcf6428a31d26002c74",
-  "_spec": "0.0.5",
-  "_where": "C:\\Users\\m.akiliev\\go\\workspace\\klb\\view",
   "author": {
     "name": "Michael Akiliev"
   },
@@ -71,7 +42,7 @@
     "prod:es": "rollup -c --config src/rollup.config.js --environment INCLUDE_DEPS,BUILD:es",
     "prod": "npm run prod:es && npm run prod:cjs"
   },
-  "version": "1.1.1",
+  "version": "1.1.2",
   "devDependencies": {
     "@types/node": "^8.0.58",
     "@types/ramda": "^0.25.8",
