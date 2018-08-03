@@ -82,7 +82,7 @@ class WebSocketClient implements types.WebSocketClient {
   public async ready() {
     return new Promise((ff, rj) => {
       if(this.open) {
-        return true
+        ff()
       } else {
         this.onReadyQueue.push(ff)
       }
