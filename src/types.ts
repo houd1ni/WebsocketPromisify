@@ -1,16 +1,11 @@
-
-
-export = wsc
-
-
 declare namespace wsc {
 
   /** Stuff that in use by this lib. */
   interface Socket {
     readyState: number
-    send(...any: any[])
-    close()
-    addEventListener(event: string, handler: ((event: any) => any), ...any: any[])
+    send(...any: any[]): void
+    close(): void
+    addEventListener(event: string, handler: ((event: any) => any), ...any: any[]): void
   }
 
   export type AsyncErrCode = Promise<number | null | {}>
@@ -56,7 +51,7 @@ declare namespace wsc {
       event_name: string,
       handler: (event: string) => void,
       predicate?: (event: string) => boolean
-    )
+    ): void
     close(): Promise<void | {}>
     send(user_message: any, opts: wsc.SendOptions): AsyncErrCode
     constructor(user_config: wsc.UserConfig)

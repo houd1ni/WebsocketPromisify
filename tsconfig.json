@@ -2,22 +2,20 @@
   "compilerOptions": {
     "lib": [
       "dom",
-      "es2017"
+      "esnext"
     ],
     "target":"es2015",
-    "allowJs": true,
+    "allowJs": false,
     "sourceMap": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "noUnusedLocals": false,
-    "outDir": "../dist/",
-    "rootDir": "./",
-    "baseUrl": "./",
-    "paths": {
-      "utils": ["./utils"]
-    }
+    "outDir": "./dist/",
+    "declaration": true,
+    "rootDir": ".",
+    "baseUrl": "."
   },
   "include": [
-    "./WS.ts"
+    "./src/WS.ts"
   ]
 }

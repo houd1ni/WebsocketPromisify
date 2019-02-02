@@ -1,18 +1,20 @@
 
-import SHA1 from './SHA1.js'
-import * as types from '../types'
+import SHA1 from './SHA1'
 import connectLib from './connectLib'
 import { add_event } from './utils'
+import "./types"
 
 /*  .send(your_data) wraps request to server with {id: `hash`, data: `actually your data`},
     returns a Promise, that will be rejected after a timeout or
     resolved if server returns the same signature: {id: `same_hash`, data: `response data`}
 */
 
+const sett = (
+  a: number,
+  b: { (): void; (...args: any[]): void; }
+) => setTimeout(b, a)
 
-const sett = (a, b) => setTimeout(b, a)
-
-const default_config = <types.Config>{
+const default_config = <wsc.Config>{
   data_type: 'json',  // ToDo some other stuff maybe.
   // Debug features.
   log: ((event = '', time = 0, message = '') => null),
@@ -38,7 +40,7 @@ const default_config = <types.Config>{
 }
 
 
-class WebSocketClient implements types.WebSocketClient {
+class WebSocketClient implements wsc.WebSocketClient {
 
   private open = null
   private ws = null
@@ -48,7 +50,7 @@ class WebSocketClient implements types.WebSocketClient {
   private messages = []
   private onReadyQueue = []
   private onCloseQueue = []
-  private config = <types.Config>{}
+  private config = <wsc.Config>{}
 
   private init_flush(): void {
     this.queue    = {}  // data queuse
@@ -89,7 +91,11 @@ class WebSocketClient implements types.WebSocketClient {
     })
   }
 
-  public on(event_name, handler, predicate?) {
+  public on(
+    event_name: string,
+    handler: (data: any) => any,
+    predicate?: (data: any) => boolean
+  ) {
     return add_event(this.ws, event_name, event => {
       if(!predicate || predicate(event)) {
         handler(event)
@@ -97,7 +103,7 @@ class WebSocketClient implements types.WebSocketClient {
     })
   }
 
-  public async close(): types.AsyncErrCode {
+  public async close(): wsc.AsyncErrCode {
     return new Promise((ff, rj) => {
       if(this.ws === null) {
         rj('WSP: closing a non-inited socket!')
@@ -114,7 +120,7 @@ class WebSocketClient implements types.WebSocketClient {
     })
   }
 
-  public async send(message_data, opts = <types.SendOptions>{}): types.AsyncErrCode {
+  public async send(message_data: any, opts = <wsc.SendOptions>{}): wsc.AsyncErrCode {
     this.log('Send.', message_data)
     const config   = this.config
     const message  = {}
@@ -166,9 +172,9 @@ class WebSocketClient implements types.WebSocketClient {
   }
 
 
-  constructor(user_config = {}) {
+  constructor(user_config: wsc.UserConfig = {}) {
     // Config.
-    const config = {} as types.Config
+    const config = {} as wsc.Config
     Object.assign(config, default_config)
     Object.assign(config, user_config)
     this.config = config

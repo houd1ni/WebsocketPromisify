@@ -1,15 +1,14 @@
 
-import * as types from '../types'
+import "./types"
 
-
-const add_event = (o: types.Socket, e: string, handler: types.EventHandler) => {
+const add_event = (o: wsc.Socket, e: string, handler: wsc.EventHandler) => {
   return o.addEventListener(e, handler)
 }
 
-const once = (fn) => {
+const once = (fn: Function) => {
   let has_been_cached = false
   let cached = null
-  return (...args) => {
+  return (...args: any) => {
     if(has_been_cached) {
       return cached
     } else {

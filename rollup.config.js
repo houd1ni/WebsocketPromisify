@@ -17,7 +17,7 @@ export default {
     commonjs(),
     typescript({
       typescript: require("typescript"),
-      tsconfig: "./src/tsconfig.json",
+      tsconfig: "./tsconfig.json",
       tsconfigOverride: {
         compilerOptions: {
           sourceMap: false,

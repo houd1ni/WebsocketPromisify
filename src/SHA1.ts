@@ -2,15 +2,16 @@
 // SHA1 has been taken from https://github.com/jbt/js-crypto
 // Thank you, James, for this tiny implementation!
 
-export default (str1) => {
+export default (str1: string) => {
   for (
     var blockstart = 0,
       i = 0,
       W = [],
-      A, B, C, D, F, G,
+      A: number | any[] | number[],
+      B: number, C: number, D: number, F: number, G: number,
       H = [A=0x67452301, B=0xEFCDAB89, ~A, ~B, 0xC3D2E1F0],
       word_array = [],
-      temp2,
+      temp2: number,
       s = unescape(encodeURI(str1)),
       str_len = s.length;
 
@@ -25,7 +26,7 @@ export default (str1) => {
 
     for (; i < 80;
       A = [[
-        (G = ((s = A[0]) << 5 | s >>> 27) + A[4] + (W[i] = (i<16) ? ~~word_array[blockstart + i] : G << 1 | G >>> 31) + 1518500249) + ((B = A[1]) & (C = A[2]) | ~B & (D = A[3])),
+        (G = ((s = A[0]) << 5 | (s as any >>> 27)) + A[4] + (W[i] = (i<16) ? ~~word_array[blockstart + i] : G << 1 | G >>> 31) + 1518500249) + ((B = A[1]) & (C = A[2]) | ~B & (D = A[3])),
         F = G + (B ^ C ^ D) + 341275144,
         G + (B & C | B & D | C & D) + 882459459,
         F + 1535694389

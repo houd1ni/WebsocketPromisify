@@ -1,20 +1,18 @@
-
-import * as types from '../types'
-
+import "./types"
 import {
   once,
   add_event
 } from './utils'
 
 
-const init = function(ws: types.Socket) {
+const init = function(ws: wsc.Socket) {
   const config = this.config
   this.open = true
-  this.onReadyQueue.forEach((fn) => fn())
+  this.onReadyQueue.forEach((fn: Function) => fn())
   this.onReadyQueue = []
   const {id_key, data_key} = config.server
   // Send all pending messages.
-  this.messages.forEach((message) => message.send())
+  this.messages.forEach((message: any) => message.send())
   // It's reconnecting.
   if(this.reconnect_timeout !== null) {
     clearInterval(this.reconnect_timeout)
