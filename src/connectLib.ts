@@ -1,4 +1,4 @@
-import "./types"
+import './types'
 import {
   once,
   add_event

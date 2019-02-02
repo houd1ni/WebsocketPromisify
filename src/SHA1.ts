@@ -26,7 +26,9 @@ export default (str1: string) => {
 
     for (; i < 80;
       A = [[
-        (G = ((s = A[0]) << 5 | (s as any >>> 27)) + A[4] + (W[i] = (i<16) ? ~~word_array[blockstart + i] : G << 1 | G >>> 31) + 1518500249) + ((B = A[1]) & (C = A[2]) | ~B & (D = A[3])),
+        (G = ((s = A[0]) << 5 | (s as any >>> 27)) + A[4] +
+        (W[i] = (i<16) ? ~~word_array[blockstart + i] : G << 1 | G >>> 31) + 1518500249) +
+        ((B = A[1]) & (C = A[2]) | ~B & (D = A[3])),
         F = G + (B ^ C ^ D) + 341275144,
         G + (B & C | B & D | C & D) + 882459459,
         F + 1535694389

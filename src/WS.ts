@@ -2,7 +2,7 @@
 import SHA1 from './SHA1'
 import connectLib from './connectLib'
 import { add_event } from './utils'
-import "./types"
+import './types'
 
 /*  .send(your_data) wraps request to server with {id: `hash`, data: `actually your data`},
     returns a Promise, that will be rejected after a timeout or
