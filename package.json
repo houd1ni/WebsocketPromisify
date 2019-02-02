@@ -7,7 +7,7 @@
   },
   "bundleDependencies": false,
   "deprecated": false,
-  "description": "Makes it easier to handle different data via WebSockets.",
+  "description": "Wraps your WebSockets into Promise-based class with full d.ts typings on client & server",
   "homepage": "https://github.com/houd1ni/WebsocketPromisify#readme",
   "keywords": [
     "WebSockets",
@@ -43,7 +43,7 @@
     "prod:es": "rollup -c --config rollup.config.js --environment INCLUDE_DEPS,BUILD:es",
     "prod": "npm run prod:es && npm run prod:cjs"
   },
-  "version": "2.0.0",
+  "version": "2.0.1",
   "devDependencies": {
     "@types/node": "^8.0.58",
     "@types/ramda": "^0.25.8",
