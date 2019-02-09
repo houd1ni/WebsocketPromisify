@@ -2,7 +2,7 @@
 
 [![Build Status](https://circleci.com/gh/houd1ni/WebsocketPromisify/tree/master.svg?style=shield)](https://circleci.com/gh/houd1ni/WebsocketPromisify/tree/master) 
 
-a nice this readme version: https://houd1ni.github.io/WebsocketPromisify/
+A nice-looking this readme version: https://houd1ni.github.io/WebsocketPromisify/
 
 Makes websocket's API just like REST with Promise-like API, with native Promises.
 Has a lot of yummies and very lightweight (less than 5kb in gzip)!
@@ -18,7 +18,7 @@ Features (almost all are tunable via constructor config below.)
 - ES-module and commonjs built-in.
 - Types (d.ts) included.
 - Automatically reconnects.
-- You can usEncodere the WebSocket (or your ws-like implementation) further in other stuff (socket property).
+- You can use native WebSocket or ws-like implementation (ws npm package) via `socket` property.
 - And provide your own socket instance via socket config prop.
 - Any id and data keys to negotiate with your back-end.
 - Any (serialiser)/Decoder(deserialiser).
@@ -50,7 +50,8 @@ Default constructor config is
     // Will count milliseconds for responses and put them to log function above.
     timer: false,
   // Set up.
-    // Required. URL to connect.
+    // Required. URL to connect without a protocol.
+    // Can start with /, then current page host and port will be used.
     url: 'localhost',
     // Timeout after sending a message before it drops with error.
     timeout: 1400,
@@ -102,8 +103,7 @@ Methods:
 Example:
 ```javascript
 
-  import WSP from 'wspromisify'
-
+  import WSP from 'wspromisify' // or const WSP = require('wspromisify') in Node.
 
   const somehost = 'example.com:8080'
 
