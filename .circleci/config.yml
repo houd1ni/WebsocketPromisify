@@ -28,4 +28,4 @@ jobs:
             nodejs -v
             npm -v
             npm run lint
-            npm run test:exec
+            npm run test
