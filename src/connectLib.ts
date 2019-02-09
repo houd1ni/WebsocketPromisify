@@ -84,6 +84,12 @@ const connectLib = function(ff: Function) {
   const config = this.config
   const ws = config.socket || config.adapter(`ws://${config.url}`, config.protocols)
   this.ws = ws
+ 
+  if(!ws || ws.readyState > 1) {
+    this.ws = null
+    this.log('Error: ready() on closing or closed state! Status 2.')
+    return ff(2)
+  }
 
   add_event(ws, 'error', once(() => {
     this.ws = null
@@ -91,10 +97,6 @@ const connectLib = function(ff: Function) {
     // Some network error: Connection refused or so.
     return ff(3)
   }))
-
-  if(!ws || ws.readyState > 1) {
-    throw new Error('WSP: Error: ready() on closing or closed state!')
-  }
   // Because 'open' won't be envoked on opened socket.
   if(ws.readyState) {
     init.call(this, ws)
