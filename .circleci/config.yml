@@ -22,7 +22,6 @@ jobs:
           name: prepare tests
           command: |
             npm i
-            npm run test:compile
       - run:
           name: npm test
           command: |
