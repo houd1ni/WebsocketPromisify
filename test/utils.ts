@@ -1,37 +1,31 @@
 
-import WSP from '../../dist/ws.esm'
+const WSP = require('../dist/ws')
 import axios from 'axios'
 import * as WS from 'ws'
 
-
-const turnOn = async (port: number) => {
+const turnOn = async (port: number = 8095) => {
   await axios.get('http://127.0.0.1:8085/on/' + port)
   return true
 }
 
-const shutDown = async (port: number) => {
+const shutDown = async (port: number = 8095) => {
   await axios.get('http://127.0.0.1:8085/off/' + port)
   return true
 }
 
-const createNew = async (config, port = 40510): Promise<WSP> => {
+const createNew = async (config = {}, port = 8095): Promise<any> => {
   await turnOn(port)
   const ws = new WSP(Object.assign({
     url: '127.0.0.1:' + port,
+    // log: (...a) => console.log(...a),
     adapter: (host, protocols) => new (WS as any)(host, protocols)
   }, config))
 
   return ws
 }
 
-
-const is = t => (a, b) => t.is(JSON.stringify(a), JSON.stringify(b))
-
-
-
 export {
   createNew,
   turnOn,
-  shutDown,
-  is
+  shutDown
 }

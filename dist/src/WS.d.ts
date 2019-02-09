@@ -1,4 +1,4 @@
-import "./types";
+import './types';
 declare class WebSocketClient implements wsc.WebSocketClient {
     private open;
     private ws;

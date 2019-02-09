@@ -1,18 +1,18 @@
-
+import test from 'ava'
 import {
   createNew,
   shutDown,
-  turnOn,
-  is
+  turnOn
 } from '../utils'
-import { setTimeout } from 'timers';
+import mockServer from '../mock'
 
 
 /** Reconnects if connection is broken. */
-const reconnect = async (t) => {
-  const port = 40511
-
-  return new Promise(async (ff, rj) => {
+test('reconnect', (t: any) => {
+  const port = 8116
+  return new Promise(async (ff) => {
+    await mockServer()
+    const to = setTimeout(() => ff(t.fail()), 4e4)
     const ws = await createNew({
       reconnect: 1
     }, port)
@@ -24,14 +24,10 @@ const reconnect = async (t) => {
         setTimeout(async () => {
           const msg = {echo: true, msg: 'hello!'}
           const response = await ws.send(msg)
-          is(t)(response, msg)
-          ff()
+          clearTimeout(to)
+          ff(t.deepEqual(response, msg))
         }, 1500)
       }, 1100)
     }, 500)
   })
-}
-
-
-
-export default reconnect
+})

@@ -1,27 +1,22 @@
-
+import test from 'ava'
 import {
   createNew,
-  turnOn,
-  is
+  shutDown,
+  turnOn
 } from '../utils'
+import mockServer from '../mock'
 
 import * as WS from 'ws'
 
-
 /** If an existing socket connection is provided via config. */
-const existing_socket = async (t) => {
-  let done = false
-  const existing_port = 40514
+test('existing_socket', (t) => {
+  const existing_port = 8095
   const existing_addr = 'ws://localhost:' + existing_port
-  return new Promise(async (ff, rj) => {
+  return new Promise(async (ff) => {
+    await mockServer()
+    const to = setTimeout(() => ff(t.fail()), 4e4)
 
     await turnOn(existing_port)
-
-    setTimeout(() => {
-      if(!done) {
-        ff(t.fail())
-      }
-    }, 3e3)
 
     // This one CANNOT connect as fast as we send to it,
     // So readyState is 0.
@@ -29,13 +24,13 @@ const existing_socket = async (t) => {
       socket: new (WS as any)(existing_addr)
     })
 
-    is(t)(ws1.socket.readyState, 0)
+    t.is(ws1.socket.readyState, 0)
 
     const msg1 = {echo: true, msg: 'existing_socket!'}
     const response1 = await ws1.send(msg1)
 
-    is(t)(ws1.socket.readyState, 1)
-    is(t)(response1, msg1)
+    t.is(ws1.socket.readyState, 1)
+    t.deepEqual(response1, msg1)
     await ws1.close()
 
 
@@ -48,21 +43,18 @@ const existing_socket = async (t) => {
         socket: ws2_0
       })
 
-      is(t)(ws2.socket.readyState, 1)
+      t.is(ws2.socket.readyState, 1)
     
       const msg2 = {echo: true, msg: 'existing_socket!'}
       const response2 = await ws2.send(msg2)
     
-      is(t)(ws2.socket.readyState, 1)
-      is(t)(response2, msg2)
+      t.is(ws2.socket.readyState, 1)
+      t.deepEqual(response2, msg2)
       await ws2.close()
 
+      clearTimeout(to)
+      shutDown()
       ff()
-      done = true
     })
   })
-}
-
-
-
-export default existing_socket
+})

@@ -17,8 +17,14 @@ const once = (fn: Function) => {
   }
 }
 
+const sett = (
+  a: number,
+  b: { (): void; (...args: any[]): void; }
+) => setTimeout(b, a)
+
 
 export {
   add_event,
   once,
+  sett
 }

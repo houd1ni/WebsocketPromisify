@@ -34,36 +34,52 @@
     "url": "git+https://github.com/houd1ni/WebsocketPromisify.git"
   },
   "scripts": {
-    "lint": "./node_modules/.bin/tslint 'src/**/*.ts'",
-    "test": "npm run prod:es && npm run test:compile && npm run test:exec",
-    "test:compile": "./node_modules/.bin/tsc -p ./test/",
-    "test:exec": "./node_modules/.bin/ava ./test/dist/test/src/index.js",
-    "dev": "rollup --watch -c --config rollup.config.js --environment INCLUDE_DEPS,BUILD:development",
-    "prod:cjs": "rollup -c --config rollup.config.js --environment INCLUDE_DEPS,BUILD:cjs",
-    "prod:es": "rollup -c --config rollup.config.js --environment INCLUDE_DEPS,BUILD:es",
+    "lint": "tslint 'src/**/*.ts'",
+    "test": "npm run prod:cjs && ava",
+    "test:lazy": "ava",
+    "dev": "rollup --watch -c",
+    "prod:cjs": "cross-env BUILD=cjs rollup -c",
+    "prod:es": "cross-env BUILD=es rollup -c",
     "prod": "npm run prod:es && npm run prod:cjs"
   },
-  "version": "2.0.1",
+  "version": "2.1.1",
+  "ava": {
+    "files": [
+      "./test/specs/*.ts"
+    ],
+    "serial": true,
+    "failFast": true,
+    "timeout": "2m",
+    "compileEnhancements": false,
+    "extensions": [
+      "ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ]
+  },
   "devDependencies": {
-    "@types/node": "^8.0.58",
-    "@types/ramda": "^0.25.8",
-    "@types/ws": "^3.2.1",
-    "ava": "^1.0.0-rc.2",
-    "axios": "^0.17.1",
-    "express": "^4.16.2",
-    "ramda": "^0.25.0",
+    "@types/node": "^10.12.24",
+    "@types/ramda": "^0.25.48",
+    "@types/ws": "^6.0.1",
+    "ava": "^1.2.1",
+    "axios": "^0.18.0",
+    "cross-env": "^5.2.0",
+    "express": "^4.16.4",
+    "ramda": "^0.26.1",
     "randomatic": "^3.1.1",
-    "rollup": "^0.52.1",
-    "rollup-plugin-alias": "^1.4.0",
-    "rollup-plugin-commonjs": "^8.2.6",
-    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup": "^1.1.2",
+    "rollup-plugin-alias": "^1.5.1",
+    "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-node-resolve": "^4.0.0",
     "rollup-plugin-resolve-aliases": "^0.2.0",
-    "rollup-plugin-typescript2": "^0.17.2",
-    "rollup-plugin-uglify": "^4.0.0",
-    "tslint": "^5.8.0",
-    "typescript": "^3.1.6",
+    "rollup-plugin-terser": "4.0.4",
+    "rollup-plugin-typescript2": "^0.19.2",
+    "ts-node": "^8.0.2",
+    "tslint": "^5.12.1",
+    "typescript": "^3.3.3",
     "uglify-es": "^3.3.9",
-    "ws": "^3.3.2"
+    "ws": "^6.1.3"
   },
   "types": "./dist/src/WS.d.ts"
 }

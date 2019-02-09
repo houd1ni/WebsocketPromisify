@@ -1,12 +1,10 @@
 
 import * as WS from 'ws'
 
-
 let mockServer: {[port: string]: any} = {}
 
-
-const createServer = async (port = 40510) => {
-  return new Promise((ff, rj) => {
+const createServer = (port = 40510) => {
+  return new Promise((ff) => {
     if(mockServer[port] === undefined) {
       mockServer[port] = new (WS as any).Server({ port }, () => {
         mockServer[port].on('connection', (socket) => {
@@ -38,7 +36,7 @@ const createServer = async (port = 40510) => {
 }
 
 const killServer = async (port = 40510) => {
-  return new Promise((ff, rj) => {
+  return new Promise((ff) => {
     if(mockServer[port]) {
       mockServer[port].close(() => {
         delete mockServer[port]

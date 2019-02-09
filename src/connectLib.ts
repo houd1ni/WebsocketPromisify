@@ -9,7 +9,7 @@ const init = function(ws: wsc.Socket) {
   const config = this.config
   this.open = true
   this.onReadyQueue.forEach((fn: Function) => fn())
-  this.onReadyQueue = []
+  this.onReadyQueue.splice(0)
   const {id_key, data_key} = config.server
   // Send all pending messages.
   this.messages.forEach((message: any) => message.send())
@@ -19,10 +19,10 @@ const init = function(ws: wsc.Socket) {
     this.reconnect_timeout = null
   }
 
-  add_event(ws, 'close', async (e) => {
+  add_event(ws, 'close', async () => {
     this.log('Closed.')
     this.open = false
-    this.onCloseQueue.forEach((fn) => fn())
+    this.onCloseQueue.forEach((fn: Function) => fn())
     this.onCloseQueue = []
     // Auto reconnect.
     const reconnect = config.reconnect
@@ -77,27 +77,30 @@ const init = function(ws: wsc.Socket) {
 // ---------------------------------------------------------------------------
 
 
-const connectLib = function(ff) {
+const connectLib = function(ff: Function) {
   if(this.open === true) {
-    return ff(1)
+    return ff(null)
   }
   const config = this.config
   const ws = config.socket || config.adapter(`ws://${config.url}`, config.protocols)
   this.ws = ws
 
-  add_event(ws, 'error', once((e) => {
+  add_event(ws, 'error', once(() => {
     this.ws = null
     this.log('Error status 3.')
     // Some network error: Connection refused or so.
     return ff(3)
   }))
 
+  if(!ws || ws.readyState > 1) {
+    throw new Error('WSP: Error: ready() on closing or closed state!')
+  }
   // Because 'open' won't be envoked on opened socket.
-  if(config.socket && ws.readyState === 1) {
+  if(ws.readyState) {
     init.call(this, ws)
     ff(null)
   } else {
-    add_event(ws, 'open', once((e) => {
+    add_event(ws, 'open', once(() => {
       this.log('Opened.')
       init.call(this, ws)
       return ff(null)

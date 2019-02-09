@@ -1,3 +1,3 @@
-import "./types";
-declare const connectLib: (ff: any) => any;
+import './types';
+declare const connectLib: (ff: Function) => any;
 export default connectLib;

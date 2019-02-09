@@ -1,49 +1,21 @@
 
-import SHA1 from './SHA1'
+import packNumber from './packNumber'
 import connectLib from './connectLib'
-import { add_event } from './utils'
+import { add_event, sett } from './utils'
+import { enrichConfig } from './config'
 import './types'
+
+const MAX_32 = 2**31 - 1
 
 /*  .send(your_data) wraps request to server with {id: `hash`, data: `actually your data`},
     returns a Promise, that will be rejected after a timeout or
     resolved if server returns the same signature: {id: `same_hash`, data: `response data`}
 */
-
-const sett = (
-  a: number,
-  b: { (): void; (...args: any[]): void; }
-) => setTimeout(b, a)
-
-const default_config = <wsc.Config>{
-  data_type: 'json',  // ToDo some other stuff maybe.
-  // Debug features.
-  log: ((event = '', time = 0, message = '') => null),
-  timer: false,
-  // Set up.
-  url: 'localhost',
-  timeout: 1400,
-  reconnect: 2,       // Reconnect timeout in seconds or null.
-  lazy: false,
-  socket: null,
-  adapter: ((host, protocols) => new WebSocket(host, protocols)),
-  encode: (key, data, { server }) => JSON.stringify({
-    [server.id_key]: key,
-    [server.data_key]: data
-  }),
-  decode: (rawMessage) => JSON.parse(rawMessage),
-  protocols: [],
-  pipes: [],
-  server: {
-    id_key: 'id',
-    data_key: 'data'
-  }
-}
-
-
 class WebSocketClient implements wsc.WebSocketClient {
 
   private open = null
   private ws = null
+  // in use by side functions.
   private forcibly_closed = false
   private reconnect_timeout: NodeJS.Timer = null
   private queue = {}
@@ -72,7 +44,7 @@ class WebSocketClient implements wsc.WebSocketClient {
   }
 
   private async connect() { // returns status if won't open or null if ok.
-    return new Promise((ff, rj) => {
+    return new Promise((ff) => {
       connectLib.call(this, ff)
     })
   }
@@ -82,7 +54,7 @@ class WebSocketClient implements wsc.WebSocketClient {
   }
 
   public async ready() {
-    return new Promise((ff, rj) => {
+    return new Promise((ff) => {
       if(this.open) {
         ff()
       } else {
@@ -124,11 +96,10 @@ class WebSocketClient implements wsc.WebSocketClient {
     this.log('Send.', message_data)
     const config   = this.config
     const message  = {}
-    const id_key   = config.server.id_key
     const data_key = config.server.data_key
     const first_time_lazy = config.lazy && !this.open
 
-    const message_id = SHA1('' + ((Math.random()*1e5)|0)).slice(0, 20)
+    const message_id = packNumber((Math.random()*(MAX_32-10))|0)
     if(typeof opts.top === 'object') {
       if(opts.top[data_key]) {
         throw new Error('Attempting to set data key/token via send() options!')
@@ -140,6 +111,7 @@ class WebSocketClient implements wsc.WebSocketClient {
       (pipe) => message_data = pipe(message_data)
     )
 
+    console.log({open: this.open, encoded: config.encode(message_id, message_data, config)})
     if(this.open === true) {
       this.ws.send(config.encode(message_id, message_data, config))
     } else if(this.open === false || first_time_lazy) {
@@ -173,18 +145,14 @@ class WebSocketClient implements wsc.WebSocketClient {
 
 
   constructor(user_config: wsc.UserConfig = {}) {
-    // Config.
-    const config = {} as wsc.Config
-    Object.assign(config, default_config)
-    Object.assign(config, user_config)
-    this.config = config
+    this.config = enrichConfig(user_config)
     // Init.
     this.init_flush()
     // Flags.
     this.open = false
     this.reconnect_timeout = null
     this.forcibly_closed = false
-    if(!config.lazy) {
+    if(!this.config.lazy) {
       this.connect()
     }
   }
