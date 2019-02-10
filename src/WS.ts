@@ -111,7 +111,6 @@ class WebSocketClient implements wsc.WebSocketClient {
       (pipe) => message_data = pipe(message_data)
     )
 
-    console.log({open: this.open, encoded: config.encode(message_id, message_data, config)})
     if(this.open === true) {
       this.ws.send(config.encode(message_id, message_data, config))
     } else if(this.open === false || first_time_lazy) {
