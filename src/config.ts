@@ -27,6 +27,7 @@ const default_config = <wsc.Config>{
 
 const enrichConfig = (config: wsc.UserConfig) => {
   const full_config: wsc.Config = Object.assign(
+    {},
     default_config,
     config
   )
