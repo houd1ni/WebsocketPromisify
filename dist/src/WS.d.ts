@@ -1,5 +1,5 @@
 import './types';
-declare class WebSocketClient implements wsc.WebSocketClient {
+declare class WebSocketClient {
     private open;
     private ws;
     private forcibly_closed;

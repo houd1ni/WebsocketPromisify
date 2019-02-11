@@ -1,6 +1,10 @@
 declare namespace wsc {
 
-  /** Stuff that in use by this lib. */
+  interface DataObject {
+    [key: string]: any
+  }
+
+  /** Minimal socket-like interface. */
   interface Socket {
     readyState: number
     send(...any: any[]): void
@@ -44,16 +48,5 @@ declare namespace wsc {
   export interface SendOptions {
     top: any
     data_type: DataType
-  }
-
-  export class WebSocketClient {
-    on(
-      event_name: string,
-      handler: (event: string) => void,
-      predicate?: (event: string) => boolean
-    ): void
-    close(): Promise<void | {}>
-    send(user_message: any, opts: wsc.SendOptions): AsyncErrCode
-    constructor(user_config: wsc.UserConfig)
   }
 }

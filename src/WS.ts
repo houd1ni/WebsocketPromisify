@@ -11,7 +11,7 @@ const MAX_32 = 2**31 - 1
     returns a Promise, that will be rejected after a timeout or
     resolved if server returns the same signature: {id: `same_hash`, data: `response data`}
 */
-class WebSocketClient implements wsc.WebSocketClient {
+class WebSocketClient {
 
   private open = null
   private ws = null
@@ -85,7 +85,7 @@ class WebSocketClient implements wsc.WebSocketClient {
           this.init_flush()
           this.ws = null
           this.forcibly_closed = true
-          ff()
+          ff(null)
         })
         this.ws.close()
       }
