@@ -18,7 +18,7 @@ Features (almost all are tunable via constructor config below.)
 - ES-module and commonjs built-in.
 - Types (d.ts) included.
 - Automatically reconnects.
-- You can use native WebSocket or ws-like implementation (ws npm package) via `socket` property.
+- Supports existent native WebSocket or ws-like implementation (ws npm package) via `socket` property.
 - And provide your own socket instance via socket config prop.
 - Any id and data keys to negotiate with your back-end.
 - Any (serialiser)/Decoder(deserialiser).
