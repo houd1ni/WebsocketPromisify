@@ -1,3 +1,5 @@
+version: 2.1
+
 jobs:
   build:
     machine: true
@@ -11,7 +13,7 @@ jobs:
           sudo apt-get install -y nodejs
           sudo npm install -g npm
       - run:
-        name: prepare coverage
+        name: coverage prepare
         command: |
           sudo npm i -g codecov
       - run:
@@ -19,7 +21,7 @@ jobs:
         command: |
           npm i -g npm
       - run:
-        name: prepare tests
+        name: install
         command: |
           npm i
       - run:
