@@ -1,6 +1,10 @@
 # WebsocketPromisify
 
+<p align="left">
 [![Build Status](https://circleci.com/gh/houd1ni/WebsocketPromisify/tree/master.svg?style=shield)](https://circleci.com/gh/houd1ni/WebsocketPromisify/tree/master) 
+
+[![codecov](https://codecov.io/gh/houd1ni/WebsocketPromisify/branch/master/graph/badge.svg)](https://codecov.io/gh/houd1ni/WebsocketPromisify)
+</p>
 
 A nice-looking this readme version: https://houd1ni.github.io/WebsocketPromisify/
 
