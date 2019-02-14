@@ -1,31 +1,35 @@
-
-version: 2
-
-
 jobs:
   build:
     machine: true
     steps:
       - checkout
       - run:
-          name: install
-          command: |
-            sudo apt-get -y update
-            sudo curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -
-            sudo apt-get install -y nodejs
-            sudo npm install -g npm
+        name: install
+        command: |
+          sudo apt-get -y update
+          sudo curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+          sudo npm install -g npm
       - run:
-          name: node setup
-          command: |
-            npm i -g npm
+        name: prepare coverage
+        command: |
+          sudo npm i -g codecov
       - run:
-          name: prepare tests
-          command: |
-            npm i
+        name: node setup
+        command: |
+          npm i -g npm
       - run:
-          name: npm test
-          command: |
-            nodejs -v
-            npm -v
-            npm run lint
-            npm run test
+        name: prepare tests
+        command: |
+          npm i
+      - run:
+        name: npm test
+        command: |
+          nodejs -v
+          npm -v
+          npm run lint
+          npm run test
+      - run:
+        name: coverage report
+        command: |
+          codecov
