@@ -36,7 +36,7 @@
   "scripts": {
     "lint": "tslint 'src/**/*.ts'",
     "test": "npm run prod:cjs && ava",
-    "test:report": "nyc report --reporter=json > coverage/coverage.json",
+    "test:report": "nyc npm test && nyc report --reporter=json > coverage/coverage.json",
     "test:lazy": "ava",
     "dev": "rollup --watch -c",
     "prod:cjs": "cross-env BUILD=cjs rollup -c",
