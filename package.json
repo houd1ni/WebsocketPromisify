@@ -43,7 +43,7 @@
     "prod:es": "cross-env BUILD=es rollup -c",
     "prod": "npm run prod:es && npm run prod:cjs"
   },
-  "version": "2.1.9",
+  "version": "2.1.10",
   "ava": {
     "files": [
       "./test/specs/*.ts"

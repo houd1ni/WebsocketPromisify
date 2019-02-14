@@ -7,7 +7,9 @@ A nice-looking this readme version: https://houd1ni.github.io/WebsocketPromisify
 Makes websocket's API just like REST with Promise-like API, with native Promises.
 Has a lot of yummies and very lightweight (less than 3kb in gzip)!
 
-```javascript const responseData = await ws.send({catSaid: 'Meow!'}) ```
+```javascript
+const responseData = await ws.send({catSaid: 'Meow!'})
+```
 
 // If you detected some bug, want some stuff to be added, feel free to open an issue!
 Large data support (chunking), plugins, streams and different server-side implementations are coming.
