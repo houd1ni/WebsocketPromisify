@@ -17,9 +17,6 @@ jobs:
           name: node setup
           command: npm i -g npm
       - run:
-          name: coverage prepare
-          command: npm i -g codecov
-      - run:
           name: install
           command: npm i
       - run:
@@ -29,6 +26,3 @@ jobs:
               npm -v
               npm run lint
               npm run test:report
-      - run:
-          name: coverage analysis
-          command: codecov
