@@ -15,11 +15,10 @@ jobs:
               sudo npm install -g npm
       - run:
           name: node setup
-          command: |
-              sudo npm i -g npm
+          command: npm i -g npm
       - run:
           name: coverage prepare
-          command: sudo npm i -g codecov
+          command: npm i -g codecov
       - run:
           name: install
           command: npm i
