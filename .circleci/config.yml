@@ -14,12 +14,12 @@ jobs:
               sudo apt-get install -y nodejs
               sudo npm install -g npm
       - run:
-          name: coverage prepare
-          command: sudo npm i -g codecov
-      - run:
           name: node setup
           command: |
               sudo npm i -g npm
+      - run:
+          name: coverage prepare
+          command: sudo npm i -g codecov
       - run:
           name: install
           command: npm i
