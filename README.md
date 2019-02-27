@@ -1,6 +1,6 @@
 # WebsocketPromisify
 
-[![Build Status](https://circleci.com/gh/houd1ni/WebsocketPromisify/tree/master.svg?style=shield)](https://circleci.com/gh/houd1ni/WebsocketPromisify/tree/master) [![codecov](https://codecov.io/gh/houd1ni/WebsocketPromisify/branch/master/graph/badge.svg)](https://codecov.io/gh/houd1ni/WebsocketPromisify) <img src="https://badgen.net/bundlephobia/minzip/wspromisify">  [![Deps](https://david-dm.org/houd1ni/WebsocketPromisify.svg)](https://david-dm.org/houd1ni/WebsocketPromisify) [![DevDeps](https://david-dm.org/houd1ni/WebsocketPromisify/dev-status.svg)](https://david-dm.org/houd1ni/WebsocketPromisify)
+[![Build Status](https://circleci.com/gh/houd1ni/WebsocketPromisify/tree/master.svg?style=shield)](https://circleci.com/gh/houd1ni/WebsocketPromisify/tree/master) [![codecov](https://codecov.io/gh/houd1ni/WebsocketPromisify/branch/master/graph/badge.svg)](https://codecov.io/gh/houd1ni/WebsocketPromisify) [![bundlephobia](https://badgen.net/bundlephobia/minzip/wspromisify)](https://bundlephobia.com/result?p=wspromisify)  [![npm](https://badgen.net/npm/v/wspromisify)](https://www.npmjs.com/package/wspromisify) [![Deps](https://david-dm.org/houd1ni/WebsocketPromisify.svg)](https://david-dm.org/houd1ni/WebsocketPromisify) [![DevDeps](https://david-dm.org/houd1ni/WebsocketPromisify/dev-status.svg)](https://david-dm.org/houd1ni/WebsocketPromisify)
 
 A nice-looking this readme version: https://houd1ni.github.io/WebsocketPromisify/
 
