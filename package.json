@@ -39,11 +39,11 @@
     "test:report": "nyc npm test && nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "test:lazy": "ava",
     "dev": "rollup --watch -c",
-    "prod:cjs": "cross-env BUILD=cjs rollup -c",
-    "prod:es": "cross-env BUILD=es rollup -c",
+    "prod:cjs": "cross-env NODE_ENV=production BUILD=cjs rollup -c",
+    "prod:es": "cross-env NODE_ENV=production BUILD=es rollup -c",
     "prod": "npm run prod:es && npm run prod:cjs"
   },
-  "version": "2.1.13",
+  "version": "2.1.14",
   "ava": {
     "files": [
       "./test/specs/*.ts"
@@ -77,11 +77,11 @@
     "rollup-plugin-node-resolve": "^4.0.1",
     "rollup-plugin-resolve-aliases": "^0.2.0",
     "rollup-plugin-terser": "4.0.4",
+    "rollup-plugin-replace": "^2.1.0",
     "rollup-plugin-typescript2": "^0.19.3",
     "ts-node": "^8.0.2",
     "tslint": "^5.13.0",
     "typescript": "^3.3.3333",
-    "uglify-es": "^3.3.9",
     "ws": "^6.1.4"
   },
   "types": "./dist/src/WS.d.ts"

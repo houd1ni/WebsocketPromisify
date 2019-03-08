@@ -1,8 +1,8 @@
 import commonjs from 'rollup-plugin-commonjs'
 import resolve from 'rollup-plugin-node-resolve'
 import typescript from 'rollup-plugin-typescript2'
-import * as uglifyES from 'uglify-es'
 import { terser } from 'rollup-plugin-terser'
+import replace from 'rollup-plugin-replace'
 
 export default {
   input: 'src/WS.ts',
@@ -21,10 +21,13 @@ export default {
       tsconfigOverride: {
         compilerOptions: {
           sourceMap: false,
-          inlineSourceMap: process.env.BUILD==='development'
+          inlineSourceMap: process.env.NODE_ENV==='development'
         }
       }
     }),
-    terser()
+    terser(),
+    replace({
+      'process.env.NODE_ENV': JSON.stringify(process.env.BUILD)
+    })
   ]
 }
