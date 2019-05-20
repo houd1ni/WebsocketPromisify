@@ -43,7 +43,7 @@
     "prod:es": "cross-env NODE_ENV=production BUILD=es rollup -c",
     "prod": "npm run prod:es && npm run prod:cjs"
   },
-  "version": "2.1.16",
+  "version": "2.1.17beta.0",
   "ava": {
     "files": [
       "./test/specs/*.ts"
@@ -60,25 +60,25 @@
     ]
   },
   "devDependencies": {
-    "@types/node": "^12.0.0",
+    "@types/node": "^12.0.2",
     "@types/ramda": "^0.26.8",
     "@types/ws": "^6.0.1",
     "ava": "^1.4.1",
     "axios": "^0.18.0",
-    "codecov": "^3.4.0",
+    "codecov": "^3.5.0",
     "cross-env": "^5.2.0",
-    "express": "^4.16.4",
+    "express": "^4.17.0",
     "nyc": "^14.1.1",
     "ramda": "^0.26.1",
     "randomatic": "^3.1.1",
-    "rollup": "^1.11.3",
+    "rollup": "^1.12.3",
     "rollup-plugin-alias": "^1.5.1",
-    "rollup-plugin-commonjs": "^9.3.4",
-    "rollup-plugin-node-resolve": "^4.2.4",
+    "rollup-plugin-commonjs": "^10.0.0",
+    "rollup-plugin-node-resolve": "^5.0.0",
     "rollup-plugin-resolve-aliases": "^0.2.0",
     "rollup-plugin-terser": "4.0.4",
     "rollup-plugin-replace": "^2.2.0",
-    "rollup-plugin-typescript2": "^0.21.0",
+    "rollup-plugin-typescript2": "^0.21.1",
     "ts-node": "^8.1.0",
     "tslint": "^5.16.0",
     "typescript": "^3.4.5",
