@@ -10,7 +10,7 @@ jobs:
           name: install
           command: |
               sudo apt-get -y update
-              sudo curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -
+              sudo curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
               sudo apt-get install -y nodejs
               sudo npm install -g npm
       - run:
