@@ -3,19 +3,11 @@ version: 2
 
 jobs:
   build:
-    machine: true
+    working_directory: ~/test
+    docker:
+      - image: circleci/node
     steps:
       - checkout
-      - run:
-          name: install
-          command: |
-              sudo apt-get -y update
-              sudo curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
-              sudo apt-get install -y nodejs
-              sudo npm install -g npm
-      - run:
-          name: node setup
-          command: npm i -g npm
       - run:
           name: install
           command: npm i
