@@ -13,7 +13,7 @@ declare class WebSocketClient {
     private log;
     private connect;
     readonly socket: any;
-    ready(): Promise<{}>;
+    ready(): Promise<unknown>;
     on(event_name: string, handler: (data: any) => any, predicate?: (data: any) => boolean): void;
     close(): wsc.AsyncErrCode;
     send(message_data: any, opts?: wsc.SendOptions): wsc.AsyncErrCode;
