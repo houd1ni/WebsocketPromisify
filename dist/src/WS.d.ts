@@ -12,11 +12,11 @@ declare class WebSocketClient {
     private init_flush;
     private log;
     private connect;
-    readonly socket: any;
+    get socket(): any;
     ready(): Promise<unknown>;
     on(event_name: string, handler: (data: any) => any, predicate?: (data: any) => boolean): void;
     close(): wsc.AsyncErrCode;
-    send(message_data: any, opts?: wsc.SendOptions): wsc.AsyncErrCode;
+    send<DataType = any>(message_data: DataType, opts?: wsc.SendOptions): Promise<DataType>;
     constructor(user_config?: wsc.UserConfig);
 }
 export default WebSocketClient;

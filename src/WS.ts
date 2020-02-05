@@ -31,7 +31,6 @@ class WebSocketClient {
 
   private log(event: string, message: any = null, time: number = null): void {
     const config = this.config
-    event = `WSP: ${event}`
     if(time !== null) {
       config.log(event, time, message)
     } else {
@@ -92,8 +91,11 @@ class WebSocketClient {
     })
   }
 
-  public async send(message_data: any, opts = <wsc.SendOptions>{}): wsc.AsyncErrCode {
-    this.log('Send.', message_data)
+  public async send<DataType = any>(
+    message_data: DataType,
+    opts = <wsc.SendOptions>{}
+  ): Promise<DataType> {
+    this.log('send', message_data)
     const config   = this.config
     const message  = {}
     const data_key = config.server.data_key
