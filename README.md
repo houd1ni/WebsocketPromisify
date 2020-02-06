@@ -113,10 +113,13 @@ Example:
 
   const someFunction = async () => {
     const ws = new WSP({
-      // Just a random config. log() is ok.
-      url: `${somehost}/ws`,
-      timeout: 2e3,
-      timer: true,
+      // If url starts with /,
+      // it results in ws(s if in https)://currentHost:currentPort/thisUrl
+      url: 'ws://example.com/ws',
+      timeout: 2e3, // 1400ms by default.
+      timer: true, // false by default.
+      // To log data trips. Events: open, close, send, reconnect, error.
+      // If timer isn't enabled, the signature is log(event, message)
       log(event, time, message = '') {
         if(time !== null) {
           console.log(event, `in ${time}ms`, message)

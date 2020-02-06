@@ -20,7 +20,7 @@ const init = function(ws: wsc.Socket) {
   }
 
   add_event(ws, 'close', async () => {
-    this.log('Closed.')
+    this.log('close')
     this.open = false
     this.onCloseQueue.forEach((fn: Function) => fn())
     this.onCloseQueue = []
@@ -32,7 +32,7 @@ const init = function(ws: wsc.Socket) {
       !this.forcibly_closed
     ) {
       const reconnectFunc = async () => {
-        this.log('Trying to reconnect...')
+        this.log('reconnect')
         if(this.ws !== null) {
           this.ws.close()
           this.ws = null
@@ -61,7 +61,7 @@ const init = function(ws: wsc.Socket) {
         if(q) {
           // Debug, Log.
           const time = q.sent_time ? (Date.now() - q.sent_time) : null
-          this.log('Message.', data[data_key], time)
+          this.log('message', data[data_key], time)
           // Play.
           q.ff(data[data_key])
           clearTimeout(q.timeout)
@@ -69,7 +69,7 @@ const init = function(ws: wsc.Socket) {
         }
       }
     } catch (err) {
-      console.error(err, `Decode error. Got: ${e.data}`)
+      console.error(err, `WSP: Decode error. Got: ${e.data}`)
     }
   })
 }
@@ -82,18 +82,18 @@ const connectLib = function(ff: Function) {
     return ff(null)
   }
   const config = this.config
-  const ws = config.socket || config.adapter(`ws://${config.url}`, config.protocols)
+  const ws = config.socket || config.adapter(config.url, config.protocols)
   this.ws = ws
  
   if(!ws || ws.readyState > 1) {
     this.ws = null
-    this.log('Error: ready() on closing or closed state! Status 2.')
+    this.log('error', 'ready() on closing or closed state! status 2.')
     return ff(2)
   }
 
   add_event(ws, 'error', once(() => {
     this.ws = null
-    this.log('Error status 3.')
+    this.log('error', 'status 3.')
     // Some network error: Connection refused or so.
     return ff(3)
   }))
@@ -103,7 +103,7 @@ const connectLib = function(ff: Function) {
     ff(null)
   } else {
     add_event(ws, 'open', once(() => {
-      this.log('Opened.')
+      this.log('open')
       init.call(this, ws)
       return ff(null)
     }))

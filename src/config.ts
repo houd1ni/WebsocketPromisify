@@ -35,7 +35,8 @@ const enrichConfig = (config: wsc.UserConfig) => {
   const url = full_config.url
   if(url[0] == '/') {
     try {
-      full_config.url = `${location.hostname}:${location.port}${url}`
+      const protocol = location.protocol.includes('s:') ? 'wss' : 'ws'
+      full_config.url = `${protocol}://${location.hostname}:${location.port}${url}`
     } catch (e) {
       throw new Error('WSP: URL starting with / in non-browser environment!')
     }
