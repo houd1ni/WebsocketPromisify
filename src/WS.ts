@@ -91,10 +91,10 @@ class WebSocketClient {
     })
   }
 
-  public async send<DataType = any>(
-    message_data: DataType,
+  public async send<RequestDataType = any, ResponseDataType = any>(
+    message_data: RequestDataType,
     opts = <wsc.SendOptions>{}
-  ): Promise<DataType> {
+  ): Promise<ResponseDataType> {
     this.log('send', message_data)
     const config   = this.config
     const message  = {}

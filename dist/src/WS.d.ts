@@ -16,7 +16,7 @@ declare class WebSocketClient {
     ready(): Promise<unknown>;
     on(event_name: string, handler: (data: any) => any, predicate?: (data: any) => boolean): void;
     close(): wsc.AsyncErrCode;
-    send<DataType = any>(message_data: DataType, opts?: wsc.SendOptions): Promise<DataType>;
+    send<RequestDataType = any, ResponseDataType = any>(message_data: RequestDataType, opts?: wsc.SendOptions): Promise<ResponseDataType>;
     constructor(user_config?: wsc.UserConfig);
 }
 export default WebSocketClient;
