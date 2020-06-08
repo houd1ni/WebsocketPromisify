@@ -8,13 +8,14 @@ declare class WebSocketClient {
     private messages;
     private onReadyQueue;
     private onCloseQueue;
+    private messageHandlers;
     private config;
     private init_flush;
     private log;
     private connect;
     get socket(): any;
     ready(): Promise<unknown>;
-    on(event_name: string, handler: (data: any) => any, predicate?: (data: any) => boolean): void;
+    on(event_name: string, handler: (data: any) => any, predicate?: (data: any) => boolean, raw?: boolean): number | void;
     close(): wsc.AsyncErrCode;
     send<RequestDataType = any, ResponseDataType = any>(message_data: RequestDataType, opts?: wsc.SendOptions): Promise<ResponseDataType>;
     constructor(user_config?: wsc.UserConfig);

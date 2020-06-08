@@ -56,6 +56,7 @@ const init = function(ws: wsc.Socket) {
   add_event(ws, 'message', (e) => {
     try {
       const data = config.decode(e.data)
+      this.messageHandlers.forEach((h: any) => h({...e, data}))
       if(data[id_key]) {
         const q = this.queue[data[id_key]]
         if(q) {

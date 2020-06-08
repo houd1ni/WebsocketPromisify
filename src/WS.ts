@@ -4,6 +4,7 @@ import connectLib from './connectLib'
 import { add_event, sett } from './utils'
 import { enrichConfig } from './config'
 import './types'
+import { T } from 'ramda'
 
 const MAX_32 = 2**31 - 1
 
@@ -22,6 +23,7 @@ class WebSocketClient {
   private messages = []
   private onReadyQueue = []
   private onCloseQueue = []
+  private messageHandlers = []
   private config = <wsc.Config>{}
 
   private init_flush(): void {
@@ -65,13 +67,14 @@ class WebSocketClient {
   public on(
     event_name: string,
     handler: (data: any) => any,
-    predicate?: (data: any) => boolean
+    predicate: (data: any) => boolean = T,
+    raw = false
   ) {
-    return add_event(this.ws, event_name, event => {
-      if(!predicate || predicate(event)) {
-        handler(event)
-      }
-    })
+    const _handler: wsc.EventHandler = (event) =>
+      predicate(event) && handler(event)
+    return !raw && event_name==='message'
+      ? this.messageHandlers.push(_handler)
+      : add_event(this.ws, event_name, _handler)
   }
 
   public async close(): wsc.AsyncErrCode {
