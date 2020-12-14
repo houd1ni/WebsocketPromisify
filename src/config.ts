@@ -22,6 +22,10 @@ const default_config = <wsc.Config>{
   server: {
     id_key: 'id',
     data_key: 'data'
+  },
+  ping: {
+    interval: 55,
+    content: {}
   }
 }
 

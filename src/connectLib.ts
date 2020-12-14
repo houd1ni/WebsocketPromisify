@@ -12,11 +12,18 @@ const init = function(ws: wsc.Socket) {
   this.onReadyQueue.splice(0)
   const {id_key, data_key} = config.server
   // Send all pending messages.
+  this.handlers.open.forEach((h) => h())
   this.messages.forEach((message: any) => message.send())
   // It's reconnecting.
   if(this.reconnect_timeout !== null) {
     clearInterval(this.reconnect_timeout)
     this.reconnect_timeout = null
+  }
+  if(config.ping) {
+    const ping_interval = setInterval(() => {
+      if(this.open) this.send(config.ping.content)
+      if(this.forcibly_closed) clearInterval(ping_interval)
+    }, config.ping.interval)
   }
 
   add_event(ws, 'close', async () => {
@@ -56,7 +63,7 @@ const init = function(ws: wsc.Socket) {
   add_event(ws, 'message', (e) => {
     try {
       const data = config.decode(e.data)
-      this.messageHandlers.forEach((h: any) => h({...e, data}))
+      this.handlers.message.forEach((h: any) => h({...e, data}))
       if(data[id_key]) {
         const q = this.queue[data[id_key]]
         if(q) {
@@ -92,9 +99,10 @@ const connectLib = function(ff: Function) {
     return ff(2)
   }
 
-  add_event(ws, 'error', once(() => {
-    this.ws = null
+  add_event(ws, 'error', once((e) => {
     this.log('error', 'status 3.')
+    this.handlers.error.forEach((h) => h(e))
+    this.ws = null
     // Some network error: Connection refused or so.
     return ff(3)
   }))

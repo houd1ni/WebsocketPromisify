@@ -23,7 +23,9 @@ class WebSocketClient {
   private messages = []
   private onReadyQueue = []
   private onCloseQueue = []
-  private messageHandlers = []
+  private handlers = <{[event: string]: ((e: any) => void)[]}>{
+    open: [], message: [], close: [], error: []
+  }
   private config = <wsc.Config>{}
 
   private init_flush(): void {
@@ -55,7 +57,7 @@ class WebSocketClient {
   }
 
   public async ready() {
-    return new Promise((ff) => {
+    return new Promise<void>((ff) => {
       if(this.open) {
         ff()
       } else {
@@ -65,16 +67,16 @@ class WebSocketClient {
   }
 
   public on(
-    event_name: string,
+    event_name: wsc.WSEvent,
     handler: (data: any) => any,
     predicate: (data: any) => boolean = T,
     raw = false
   ) {
     const _handler: wsc.EventHandler = (event) =>
       predicate(event) && handler(event)
-    return !raw && event_name==='message'
-      ? this.messageHandlers.push(_handler)
-      : add_event(this.ws, event_name, _handler)
+    return raw
+      ? add_event(this.ws, event_name, _handler)
+      : this.handlers[event_name].push(_handler)
   }
 
   public async close(): wsc.AsyncErrCode {

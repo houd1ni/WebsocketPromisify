@@ -2,6 +2,7 @@ declare namespace wsc {
     interface DataObject {
         [key: string]: any;
     }
+    type WSEvent = 'open' | 'message' | 'close' | 'error';
     /** Minimal socket-like interface. */
     interface Socket {
         readyState: number;
@@ -33,6 +34,10 @@ declare namespace wsc {
         server: {
             id_key: string;
             data_key: string;
+        };
+        ping: {
+            interval: number;
+            content: any;
         };
     }
     type UserConfig = Partial<Config>;

@@ -33,6 +33,7 @@ Features (almost all are tunable via constructor config below.)
 - Any protocols field.
 - Rejects if sent into closed socket or after some timeout without response.
 - If something sent before connection is estabilished, it sends when it's ready.
+- Pings to stay connected if necessary.
 
 How it on Server Side ?
 ```
@@ -79,6 +80,11 @@ Default constructor config is
     server: {
       id_key: 'id',
       data_key: 'data'
+    },
+    // Pings to avoid interruptions. null to disable.
+    ping: {
+      interval: 55, // seconds.
+      content: {} // goes to `data` => { id, data: {} } by default.
     }
 }
 ```
@@ -97,7 +103,7 @@ Methods:
   ready()
   // sends any type of message and returns a Promise.
   send(message),
-  // .addEventListener with optional predicate.
+  // .addEventListener with optional predicate that works after reconnections.
   on(event_name, handler, predicate = (WebSocketEvent) => true),
   // Closes the connection and free up memory. Returns Promise that it has been done.
   close()
