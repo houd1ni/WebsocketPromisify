@@ -23,7 +23,7 @@ const init = function(ws: wsc.Socket) {
     const ping_interval = setInterval(() => {
       if(this.open) this.send(config.ping.content)
       if(this.forcibly_closed) clearInterval(ping_interval)
-    }, config.ping.interval)
+    }, config.ping.interval*1e3)
   }
 
   add_event(ws, 'close', async () => {
