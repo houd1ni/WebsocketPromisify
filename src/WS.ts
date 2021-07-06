@@ -140,7 +140,7 @@ class WebSocketClient {
           if(this.queue[message_id]) {
             rj({
               'Websocket timeout expired: ': config.timeout,
-              'for the message': message
+              'for the message ': message_data
             })
             delete this.queue[message_id]
           }
