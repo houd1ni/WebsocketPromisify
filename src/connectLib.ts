@@ -71,7 +71,7 @@ const init = function(ws: wsc.Socket) {
           const time = q.sent_time ? (Date.now() - q.sent_time) : null
           this.log('message', data[data_key], time)
           // Play.
-          q.ff(data[data_key])
+          q.ff(data)
           clearTimeout(q.timeout)
           delete this.queue[data[id_key]]
         }
