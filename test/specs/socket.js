@@ -1,12 +1,9 @@
 import test from 'ava'
-import {
-  createNew,
-  shutDown
-} from '../utils'
-import mockServer from '../mock'
+import { createNew, shutDown } from '../utils.js'
+import mockServer from '../mock/index.js'
 
 /** Socket property check. */
-test('sockets', (t) => {
+test.serial('sockets', (t) => {
   return new Promise(async ff => {
     await mockServer()
     const to = setTimeout(() => ff(t.fail()), 4e4)

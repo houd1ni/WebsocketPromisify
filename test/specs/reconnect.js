@@ -1,14 +1,9 @@
 import test from 'ava'
-import {
-  createNew,
-  shutDown,
-  turnOn
-} from '../utils'
-import mockServer from '../mock'
-
+import { createNew, shutDown, turnOn } from '../utils.js'
+import mockServer from '../mock/index.js'
 
 /** Reconnects if connection is broken. */
-test('reconnect', (t: any) => {
+test.serial('reconnect', (t) => {
   const port = 8116
   return new Promise(async (ff) => {
     await mockServer()

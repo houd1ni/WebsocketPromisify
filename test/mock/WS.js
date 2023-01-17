@@ -1,14 +1,14 @@
 
-import * as WS from 'ws'
+import { WebSocketServer  } from 'ws'
 
-let mockServer: {[port: string]: any} = {}
+let mockServer = {}
 
 const createServer = (port = 40510) => {
   return new Promise((ff) => {
     if(mockServer[port] === undefined) {
-      mockServer[port] = new (WS as any).Server({ port }, () => {
+      mockServer[port] = new WebSocketServer({ port }, () => {
         mockServer[port].on('connection', (socket) => {
-          socket.on('message', (rawMessage: string): null => {
+          socket.on('message', (rawMessage) => {
             const {id, data} = JSON.parse(rawMessage)
             let response = ''
             if(data.shut) {
@@ -48,7 +48,4 @@ const killServer = async (port = 40510) => {
   })
 }
 
-export {
-  createServer,
-  killServer
-}
+export { createServer, killServer }

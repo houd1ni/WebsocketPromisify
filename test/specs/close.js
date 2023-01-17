@@ -1,12 +1,9 @@
 import test from 'ava'
-import {
-  createNew,
-  shutDown
-} from '../utils'
-import mockServer from '../mock'
+import { createNew, shutDown } from '../utils.js'
+import mockServer from '../mock/index.js'
 
 /** Closes the connenction. */
-test('close', (t) => {
+test.serial('close', (t) => {
   return new Promise(async (ff) => {
     await mockServer()
     const port = 40513

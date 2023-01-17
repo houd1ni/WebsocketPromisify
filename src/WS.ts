@@ -1,10 +1,9 @@
-
-import packNumber from './packNumber'
+import { zipnum } from 'zipnum'
 import connectLib from './connectLib'
 import { add_event, sett } from './utils'
 import { enrichConfig } from './config'
 import './types'
-import { T } from 'ramda'
+import { AnyFunc, T } from 'pepka'
 
 const MAX_32 = 2**31 - 1
 
@@ -14,15 +13,15 @@ const MAX_32 = 2**31 - 1
 */
 class WebSocketClient {
 
-  private open = null
-  private ws = null
+  private open = false
+  private ws: wsc.Socket|null = null
   // in use by side functions.
   private forcibly_closed = false
-  private reconnect_timeout: NodeJS.Timer = null
+  private reconnect_timeout: NodeJS.Timer|null = null
   private queue = {}
-  private messages = []
-  private onReadyQueue = []
-  private onCloseQueue = []
+  private messages: any[] = []
+  private onReadyQueue: AnyFunc[] = []
+  private onCloseQueue: AnyFunc[] = []
   private handlers = <{[event: string]: ((e: any) => void)[]}>{
     open: [], message: [], close: [], error: []
   }
@@ -33,7 +32,7 @@ class WebSocketClient {
     this.messages = []  // send() queue
   }
 
-  private log(event: string, message: any = null, time: number = null): void {
+  private log(event: string, message: any = null, time: number|null = null): void {
     const config = this.config
     if(time !== null) {
       config.log(event, time, message)
@@ -75,7 +74,7 @@ class WebSocketClient {
     const _handler: wsc.EventHandler = (event) =>
       predicate(event) && handler(event)
     return raw
-      ? add_event(this.ws, event_name, _handler)
+      ? add_event(this.ws as wsc.Socket, event_name, _handler)
       : this.handlers[event_name].push(_handler)
   }
 
@@ -84,7 +83,7 @@ class WebSocketClient {
       if(this.ws === null) {
         rj('WSP: closing a non-inited socket!')
       } else {
-        this.open = null
+        this.open = false
         this.onCloseQueue.push(() => {
           this.init_flush()
           this.ws = null
@@ -106,7 +105,7 @@ class WebSocketClient {
     const data_key = config.server.data_key
     const first_time_lazy = config.lazy && !this.open
 
-    const message_id = packNumber((Math.random()*(MAX_32-10))|0)
+    const message_id = zipnum((Math.random()*(MAX_32-10))|0)
     if(typeof opts.top === 'object') {
       if(opts.top[data_key]) {
         throw new Error('Attempting to set data key/token via send() options!')
@@ -119,10 +118,10 @@ class WebSocketClient {
     )
 
     if(this.open === true) {
-      this.ws.send(config.encode(message_id, message_data, config))
+      (this.ws as wsc.Socket).send(config.encode(message_id, message_data, config))
     } else if(this.open === false || first_time_lazy) {
       this.messages.push({
-        send: () => this.ws.send(config.encode(message_id, message_data, config))
+        send: () => (this.ws as wsc.Socket).send(config.encode(message_id, message_data, config))
       })
       if(first_time_lazy) {
         this.connect()

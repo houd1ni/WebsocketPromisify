@@ -1,22 +1,19 @@
 {
   "compilerOptions": {
-    "lib": [
-      "dom",
-      "esnext"
-    ],
-    "target":"es2015",
+    "moduleResolution": "Node",
+    "lib": [ "esnext", "DOM" ],
+    "strictNullChecks": true,
+    "target": "esnext",
+    "module": "esnext",
     "allowJs": false,
-    "sourceMap": true,
+    "sourceMap": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "noUnusedParameters": true,
     "noUnusedLocals": false,
-    "outDir": "./dist/",
-    "declaration": true,
-    "rootDir": ".",
-    "baseUrl": "."
+    "rootDir": "src",
+    "baseUrl": ".",
+    "outDir": "dist/ts"
   },
-  "include": [
-    "./src/WS.ts"
-  ]
+  "include": [ "src/**/*" ]
 }

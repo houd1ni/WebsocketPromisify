@@ -24,14 +24,14 @@ declare namespace wsc {
 
   export interface Config {
     data_type: DataType
-    log (event: string, time?: number, message?: any): void
+    log (event: string, time?: number|null, message?: any): void
     log (event: string, message?: any): void
     timer: boolean
     url: string
     timeout: number
     reconnect: number
     lazy: boolean
-    socket: Socket
+    socket: Socket | null
     adapter: (host: string, protocols?: string[]) => Socket
     encode: (key: string, message: any, config: Config) => any
     decode: (rawMessage: any) => {

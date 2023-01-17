@@ -1,12 +1,9 @@
 import test from 'ava'
-import {
-  createNew,
-  shutDown
-} from '../utils'
-import mockServer from '../mock'
+import { createNew, shutDown } from '../utils.js'
+import mockServer from '../mock/index.js'
 
 /** Sends massages if they were .send() before connection is estabilished. */
-test('sendBeforeOpen', (t) => {
+test.serial('sendBeforeOpen', (t) => {
   return new Promise(async (ff, rj) => {
     await mockServer()
     let to = setTimeout(() => rj(t.fail('cannot create')), 2e2)

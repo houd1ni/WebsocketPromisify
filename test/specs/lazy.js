@@ -1,13 +1,9 @@
 import test from 'ava'
-import {
-  createNew, shutDown
-} from '../utils'
-import mockServer from '../mock'
-
-
+import { createNew, shutDown } from '../utils.js'
+import mockServer from '../mock/index.js'
 
 /** Lazy connect */
-test('lazy', (t) => {
+test.serial('lazy', (t) => {
   t.timeout(2000)
   return new Promise(async (ff) => {
     await mockServer()

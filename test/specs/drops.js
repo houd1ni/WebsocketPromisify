@@ -1,12 +1,9 @@
 import test from 'ava'
-import {
-  createNew,
-  shutDown
-} from '../utils'
-import mockServer from '../mock'
+import { createNew, shutDown } from '../utils.js'
+import mockServer from '../mock/index.js'
 
 /** Rejects messages by timout */
-test('drops', (t) => {
+test.serial('drops', (t) => {
   return new Promise(async (ff) => {
     await mockServer()
     const ws = await createNew({

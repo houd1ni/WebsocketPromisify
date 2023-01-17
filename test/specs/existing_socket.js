@@ -1,15 +1,11 @@
 import test from 'ava'
-import {
-  createNew,
-  shutDown,
-  turnOn
-} from '../utils'
-import mockServer from '../mock'
+import { createNew, shutDown, turnOn } from '../utils.js'
+import mockServer from '../mock/index.js'
 
 import * as WS from 'ws'
 
 /** If an existing socket connection is provided via config. */
-test('existing_socket', (t) => {
+test.serial('existing_socket', (t) => {
   const existing_port = 8095
   const existing_addr = 'ws://localhost:' + existing_port
   return new Promise(async (ff) => {
@@ -21,7 +17,7 @@ test('existing_socket', (t) => {
     // This one CANNOT connect as fast as we send to it,
     // So readyState is 0.
     const ws1 = await createNew({
-      socket: new (WS as any)(existing_addr)
+      socket: new WS(existing_addr)
     })
 
     t.is(ws1.socket.readyState, 0)
@@ -33,10 +29,9 @@ test('existing_socket', (t) => {
     t.deepEqual(response1, msg1)
     await ws1.close()
 
-
     // This one DO CAN connect as fast as we send to it,
     // So readyState should be 1.
-    const ws2_0 = new (WS as any)(existing_addr)
+    const ws2_0 = new WS(existing_addr)
 
     ws2_0.addEventListener('open', async () => {
       const ws2 = await createNew({
