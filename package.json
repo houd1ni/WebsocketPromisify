@@ -26,8 +26,6 @@
     "async"
   ],
   "license": "MIT",
-  "main": "dist/bundle.cjs",
-  "module": "dist/bundle.mjs",
   "name": "wspromisify",
   "repository": {
     "type": "git",
