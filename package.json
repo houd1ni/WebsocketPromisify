@@ -26,8 +26,6 @@
     "async"
   ],
   "license": "MIT",
-  "main": "dist/ws.js",
-  "module": "dist/ws.esm.js",
   "name": "wspromisify",
   "repository": {
     "type": "git",
