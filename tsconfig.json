@@ -11,9 +11,10 @@
     "experimentalDecorators": true,
     "noUnusedParameters": true,
     "noUnusedLocals": false,
-    "rootDir": "src",
+    "rootDir": ".",
     "baseUrl": ".",
+    "allowSyntheticDefaultImports": true,
     "outDir": "dist/ts"
   },
-  "include": [ "src/**/*" ]
+  "include": [ "src/**/*", "test/**/*" ]
 }

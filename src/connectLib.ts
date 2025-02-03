@@ -1,5 +1,6 @@
+import { once } from 'pepka'
 import './types'
-import { once, add_event } from './utils'
+import { add_event } from './utils'
 
 
 const init = function(ws: wsc.Socket) {
