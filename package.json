@@ -33,9 +33,7 @@
   "scripts": {
     "lint": "tslint src/*.ts",
     "test": "tsx test/index",
-    "test-ava": "ava --timeout=2s",
     "test:report": "nyc npm test && nyc report --reporter=text-lcov > coverage.lcov && codecov",
-    "test:lazy": "ava",
     "gentypes": "dts-bundle-generator --no-check -o dist/bundle.d.ts src/WS.ts",
     "dev": "cross-env NODE_ENV=development BUILD=es rollup -c",
     "prod:cjs": "cross-env NODE_ENV=production BUILD=cjs rollup -c",
