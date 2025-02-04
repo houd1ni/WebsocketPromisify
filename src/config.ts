@@ -1,4 +1,5 @@
 import './types'
+import { native_ws } from './utils'
 
 const default_config = <wsc.Config>{
   data_type: 'json',  // ToDo some other stuff maybe.
@@ -29,13 +30,17 @@ const default_config = <wsc.Config>{
   }
 }
 
-const enrichConfig = (config: wsc.UserConfig) => {
+export const processConfig = (config: wsc.UserConfig) => {
+  if(native_ws===null && !('adapter' in config)) throw new Error(`
+    NodeJS has no native WebSocket implementation.
+    Please use 'ws' package as an adapter.
+    See https://github.com/houd1ni/WebsocketPromisify/issues/23
+  `)
   const full_config: wsc.Config = Object.assign(
     {},
     default_config,
     config
   )
-
   const url = full_config.url
   if(url[0] == '/') {
     try {
@@ -47,8 +52,4 @@ const enrichConfig = (config: wsc.UserConfig) => {
   }
 
   return full_config
-}
-
-export {
-  enrichConfig
 }

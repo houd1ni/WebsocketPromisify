@@ -1,7 +1,7 @@
 import './types'
 import { Zipnum } from 'zipnum'
 import { add_event, sett } from './utils'
-import { enrichConfig } from './config'
+import { processConfig } from './config'
 import { AnyFunc, once, T } from 'pepka'
 
 const MAX_32 = 2**31 - 1
@@ -10,15 +10,14 @@ const zipnum = new Zipnum()
 export class WebSocketClient {
   private open = false
   private ws: wsc.Socket|null = null
-  // in use by side functions.
   private forcibly_closed = false
   private reconnect_timeout: NodeJS.Timeout|null = null
   private queue = {}
   private messages: any[] = []
   private onReadyQueue: AnyFunc[] = []
   private onCloseQueue: AnyFunc[] = []
-  private handlers = <{[event: string]: ((e: any) => void)[]}>{
-    open: [], message: [], close: [], error: []
+  private handlers = <{[event in wsc.WSEvent]: ((e: any) => void)[]}>{
+    open: [], close: [], message: [], error: []
   }
   private config = <wsc.Config>{}
 
@@ -61,11 +60,12 @@ export class WebSocketClient {
         if(this.forcibly_closed) clearInterval(ping_interval)
       }, config.ping.interval*1e3)
     }
-    add_event(ws, 'close', async () => {
+    add_event(ws, 'close', async (...e) => {
       this.log('close')
       this.open = false
       this.onCloseQueue.forEach((fn: Function) => fn())
-      this.onCloseQueue = []
+      this.onCloseQueue.splice(0)
+      this.handlers.close.forEach((h: any) => h(...e))
       // Auto reconnect.
       const reconnect = config.reconnect
       if(
@@ -253,9 +253,8 @@ export class WebSocketClient {
     })
   }
 
-
   constructor(user_config: wsc.UserConfig = {}) {
-    this.config = enrichConfig(user_config)
+    this.config = processConfig(user_config)
     // Init.
     this.init_flush()
     // Flags.
