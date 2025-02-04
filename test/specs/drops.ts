@@ -5,7 +5,7 @@ import { test } from '../suite'
 /** Rejects messages by timout */
 test('drops', () => new Promise(async (ff, rj) => {
   const {port, shutDown} = await mockServer()
-  const ws = await createNew({timeout: 500}, port)
+  const ws = createNew({timeout: 500}, port)
 
   await shutDown()
   const lauchServ = async () => await mockServer(port)

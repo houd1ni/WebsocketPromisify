@@ -5,7 +5,7 @@ import mockServer from '../mock/server'
 /** Closes the connenction. */
 test('close', () => new Promise<void>(async (ff, rj) => {
   const {port} = await mockServer()
-  const ws = await createNew({}, port)
+  const ws = createNew({}, port)
 
   setTimeout(async () => {
     try {

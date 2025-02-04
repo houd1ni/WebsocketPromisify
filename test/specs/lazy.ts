@@ -7,7 +7,7 @@ import { test } from '../suite'
 test('lazy', timeout(2e3, () => {
   return new Promise<void>(async (ff, rj) => {
     const {port} = await mockServer()
-    const ws = await createNew({ lazy: true }, port)
+    const ws = createNew({ lazy: true }, port)
 
     setTimeout(async () => {
       if(ws.socket !== null) {

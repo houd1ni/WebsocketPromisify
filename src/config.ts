@@ -1,3 +1,4 @@
+import { clone } from 'pepka'
 import './types'
 import { native_ws } from './utils'
 
@@ -32,7 +33,7 @@ const default_config = <wsc.Config>{
 
 export const processConfig = (config: wsc.UserConfig) => {
   if(native_ws===null && !('adapter' in config)) throw new Error(`
-    NodeJS has no native WebSocket implementation.
+    This platform has no native WebSocket implementation.
     Please use 'ws' package as an adapter.
     See https://github.com/houd1ni/WebsocketPromisify/issues/23
   `)

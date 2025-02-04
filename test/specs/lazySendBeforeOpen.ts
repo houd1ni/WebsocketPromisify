@@ -7,7 +7,7 @@ import { test } from '../suite'
 test('lazy send before open queued.', () => new Promise(async (ff, rj) => {
   const {port} = await mockServer()
   let to = setTimeout(() => rj('cannot create'), 2e2)
-  const ws = await createNew({lazy: true}, port)
+  const ws = createNew({lazy: true}, port)
   clearTimeout(to)
 
   const msg = {echo: true, msg: 'hello!'}

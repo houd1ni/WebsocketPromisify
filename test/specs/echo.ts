@@ -7,7 +7,7 @@ import { test } from '../suite'
 test('echo', timeout(5e3, () => new Promise<void>(async (ff, rj) => {
     const {port} = await mockServer()
     let to = setTimeout(() => rj('cannot create'), 2e2)
-    const ws = await createNew({}, port)
+    const ws = createNew({}, port)
     clearTimeout(to)
 
     to = setTimeout(() => rj('cannot ready'), 2e2)

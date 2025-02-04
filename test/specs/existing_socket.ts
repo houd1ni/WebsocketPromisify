@@ -17,9 +17,7 @@ test('existing_socket', () => {
 
     // This one CANNOT connect as fast as we send to it,
     // So readyState is 0.
-    const ws1 = await createNew({
-      socket: new WS(existing_addr)
-    }, port)
+    const ws1 = createNew({socket: new WS(existing_addr)}, port)
 
     if(ws1.socket?.readyState !== 0) return rj('not ready.')
 

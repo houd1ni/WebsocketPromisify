@@ -6,7 +6,7 @@ import { test } from '../suite'
 /** Reconnects if connection is broken. */
 test('reconnect', timeout(1e4, () => new Promise<void>(async (ff, rj) => {
     const {port, shutDown} = await mockServer()
-    const ws = await createNew({ reconnect: 1 }, port)
+    const ws = createNew({ reconnect: 1 }, port)
 
     setTimeout(async () => {
       await shutDown()

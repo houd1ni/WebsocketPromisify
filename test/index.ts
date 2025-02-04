@@ -7,6 +7,7 @@ import './specs/ready'
 import './specs/reconnect'
 import './specs/lazySendBeforeOpen'
 import './specs/socket'
+import './specs/no-native-throws'
 import mockServer from './mock/server'
 import {test} from './suite'
 
