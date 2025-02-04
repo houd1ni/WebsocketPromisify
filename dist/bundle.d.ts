@@ -48,7 +48,7 @@ declare namespace wsc {
 		data_type: DataType;
 	}
 }
-declare class WebSocketClient {
+export declare class WebSocketClient {
 	private open;
 	private ws;
 	private forcibly_closed;
@@ -61,11 +61,16 @@ declare class WebSocketClient {
 	private config;
 	private init_flush;
 	private log;
+	private initSocket;
 	private connect;
 	get socket(): wsc.Socket | null;
 	ready(): Promise<void>;
 	on(event_name: wsc.WSEvent, handler: (data: any) => any, predicate?: (data: any) => boolean, raw?: boolean): number | void;
 	close(): wsc.AsyncErrCode;
+	/**  .send(your_data) wraps request to server with {id: `hash`, data: `actually your data`},
+	  returns a Promise that will be rejected after a timeout or
+	  resolved if server returns the same signature: {id: `same_hash`, data: `response data`}.
+	*/
 	send<RequestDataType = any, ResponseDataType = any>(message_data: RequestDataType, opts?: wsc.SendOptions): Promise<ResponseDataType>;
 	constructor(user_config?: wsc.UserConfig);
 }

@@ -1,5 +1,5 @@
 
-import WSP from '../src/WS'
+import WSP from '../src/WSC'
 import {AnyFunc, AnyObject} from 'pepka'
 import WS from 'ws'
 
@@ -7,7 +7,7 @@ import WS from 'ws'
 export const createNew = async (config = {}, port: number) => new WSP(Object.assign({
     url: 'ws://127.0.0.1:' + port,
     // log: (...a) => console.log(...a),
-    adapter: (host, protocols) => new WS(host, protocols)
+    adapter: (host: string, protocols?: string|string[]) => new WS(host, protocols)
   }, config)
 )
 

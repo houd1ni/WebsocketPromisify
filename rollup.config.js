@@ -6,7 +6,7 @@ import replace from '@rollup/plugin-replace'
 import tsc from 'typescript'
 
 export default {
-  input: 'src/WS.ts',
+  input: 'src/WSC.ts',
   output: {
     file: process.env.NODE_ENV=='development'
       ? 'dist/bundle.dev.js'
