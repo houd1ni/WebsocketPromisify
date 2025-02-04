@@ -1,13 +1,13 @@
 
 import {WebSocketClient} from '../src/WSC'
 import {AnyFunc, AnyObject} from 'pepka'
+import { native_ws } from '../src/utils'
 import WS from 'ws'
-
 
 export const createNew = (config = {}, port: number) => new WebSocketClient(Object.assign({
     url: 'ws://127.0.0.1:' + port,
     // log: (...a) => console.log(...a),
-    adapter: (host: string, protocols?: string|string[]) => new WS(host, protocols)
+    adapter: (host: string, protocols?: string|string[]) => new (native_ws || WS)(host, protocols)
   }, config)
 )
 

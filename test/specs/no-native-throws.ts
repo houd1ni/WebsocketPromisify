@@ -1,4 +1,3 @@
-import { createNew, timeout } from '../utils'
 import mockServer from '../mock/server'
 import { test } from '../suite'
 import {WebSocketClient} from '../../src/WSC'
