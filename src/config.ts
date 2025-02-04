@@ -1,4 +1,3 @@
-import { clone } from 'pepka'
 import './types'
 import { native_ws } from './utils'
 
