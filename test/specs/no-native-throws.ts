@@ -14,5 +14,5 @@ test('No native throws without an adapter', async () => {
   } catch {
     pass=true
   }
-  throw new Error('Does not throw.')
+  if(!pass) throw new Error('Does not throw.')
 })
