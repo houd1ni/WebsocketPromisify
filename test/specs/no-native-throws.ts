@@ -1,6 +1,6 @@
 import mockServer from '../mock/server'
 import { test } from '../suite'
-import {WebSocketClient} from '../../src/WSC'
+import WebSocketClient from '../../src/WSC'
 
 /** Ready method. */
 test('No native throws without an adapter', async () => {
