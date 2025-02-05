@@ -1,0 +1,9 @@
+#v3 at least:
+
+[The milestone](https://github.com/houd1ni/WebsocketPromisify/milestone/1)
+
+- [x] [close event bug](https://github.com/houd1ni/WebsocketPromisify/issues/38) (fixed in 2.5.0)
+- [ ] [BREAKING] export named WebSocketClient instead of default export.
+- [ ] [ping-pong without id](https://github.com/houd1ni/WebsocketPromisify/issues/39)
+- [ ] [implement prepare](https://github.com/houd1ni/WebsocketPromisify/issues/34)
+- [ ] [wiki](https://github.com/houd1ni/WebsocketPromisify/issues/4)

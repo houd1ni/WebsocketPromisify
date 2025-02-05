@@ -7,7 +7,7 @@ import { AnyFunc, once, T } from 'pepka'
 const MAX_32 = 2**31 - 1
 const zipnum = new Zipnum()
 
-export class WebSocketClient {
+class WebSocketClient {
   private open = false
   private ws: wsc.Socket|null = null
   private forcibly_closed = false
@@ -267,5 +267,5 @@ export class WebSocketClient {
   }
 }
 
-/** @deprecated. Use named import { WebSocketClient } instead. */
+/* TODO: v3: @.deprecated. Use named import { WebSocketClient } instead. */
 export default WebSocketClient

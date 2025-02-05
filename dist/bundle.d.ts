@@ -48,7 +48,7 @@ declare namespace wsc {
 		data_type: DataType;
 	}
 }
-export declare class WebSocketClient {
+declare class WebSocketClient {
 	private open;
 	private ws;
 	private forcibly_closed;

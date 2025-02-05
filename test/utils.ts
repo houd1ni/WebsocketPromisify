@@ -1,5 +1,5 @@
 
-import {WebSocketClient} from '../src/WSC'
+import WebSocketClient from '../src/WSC'
 import {AnyFunc, AnyObject} from 'pepka'
 import { native_ws } from '../src/utils'
 import WS from 'ws'
