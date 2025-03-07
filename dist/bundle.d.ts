@@ -4,7 +4,7 @@ declare namespace wsc {
 	interface DataObject {
 		[key: string]: any;
 	}
-	type WSEvent = "open" | "message" | "close" | "error";
+	type WSEvent = "open" | "message" | "close" | "error" | "timeout";
 	/** Minimal socket-like interface. */
 	interface Socket {
 		readyState: number;
@@ -60,6 +60,7 @@ declare class WebSocketClient {
 	private handlers;
 	private config;
 	private init_flush;
+	private call;
 	private log;
 	private initSocket;
 	private connect;

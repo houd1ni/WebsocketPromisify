@@ -7,6 +7,15 @@ import { AnyFunc, once, T } from 'pepka'
 const MAX_32 = 2**31 - 1
 const zipnum = new Zipnum()
 
+type EventHandler<T extends keyof WebSocketEventMap> = AnyFunc<any, [WebSocketEventMap[T]]>
+type EventHandlers = {
+  open: EventHandler<'open'>[]
+  close: EventHandler<'close'>[]
+  error: EventHandler<'error'>[]
+  message: AnyFunc<any, [WebSocketEventMap['message'] & {data: any}]>[]
+  timeout: AnyFunc<any, [data: any]>[]
+}
+
 class WebSocketClient {
   private open = false
   private ws: wsc.Socket|null = null
@@ -16,14 +25,16 @@ class WebSocketClient {
   private messages: any[] = []
   private onReadyQueue: AnyFunc[] = []
   private onCloseQueue: AnyFunc[] = []
-  private handlers = <{[event in wsc.WSEvent]: ((e: any) => void)[]}>{
-    open: [], close: [], message: [], error: []
-  }
+  private handlers: EventHandlers = { open: [], close: [], message: [], error: [], timeout: [] }
   private config = <wsc.Config>{}
 
   private init_flush(): void {
     this.queue    = {}  // data queuse
     this.messages = []  // send() queue
+  }
+  private call(event_name: wsc.WSEvent, ...args: any[]) {
+    // this.handlers.open[0]()
+    for(const h of this.handlers[event_name]) h(...args)
   }
 
   private log(event: string, message: any = null, time: number|null = null): void {
@@ -46,7 +57,7 @@ class WebSocketClient {
     this.onReadyQueue.splice(0)
     const {id_key, data_key} = config.server
     // Works also on previously opened sockets that do not fire 'open' event.
-    this.handlers.open.forEach((h) => h(ws))
+    this.call('open', ws)
     // Send all pending messages.
     this.messages.forEach((message: any) => message.send())
     // It's reconnecting.
@@ -65,7 +76,7 @@ class WebSocketClient {
       this.open = false
       this.onCloseQueue.forEach((fn: Function) => fn())
       this.onCloseQueue.splice(0)
-      this.handlers.close.forEach((h: any) => h(...e))
+      this.call('close', ...e)
       // Auto reconnect.
       const reconnect = config.reconnect
       if(
@@ -81,11 +92,10 @@ class WebSocketClient {
           }
           // If some error occured, try again.
           const status = await this.connect()
-          if(status !== null) {
+          if(status !== null)
             this.reconnect_timeout = setTimeout(reconnectFunc, reconnect * 1000)
-          }
         }
-        // No need for await.
+        // TODO: test normal close by server. Would it be infinite ?
         reconnectFunc()
       } else {
         this.ws = null
@@ -97,7 +107,7 @@ class WebSocketClient {
     add_event(ws, 'message', (e) => {
       try {
         const data = config.decode(e.data)
-        this.handlers.message.forEach((h: any) => h({...e, data}))
+        this.call('message', {...e, data})
         if(data[id_key]) {
           const q = this.queue[data[id_key]]
           if(q) {
@@ -116,7 +126,7 @@ class WebSocketClient {
     })
   }
 
-  private async connect() { // returns status if won't open or null if ok.
+  private connect() { // returns status if won't open or null if ok.
     return new Promise((ff) => {
       if(this.open === true) {
         return ff(null)
@@ -124,38 +134,33 @@ class WebSocketClient {
       const config = this.config
       const ws = config.socket || config.adapter(config.url, config.protocols)
       this.ws = ws
-      
       if(!ws || ws.readyState > 1) {
         this.ws = null
         this.log('error', 'ready() on closing or closed state! status 2.')
         return ff(2)
       }
-    
+      const ffo = once(ff)
       add_event(ws, 'error', once((e) => {
         this.log('error', 'status 3.')
-        this.handlers.error.forEach((h) => h(e))
+        this.call('error', e)
         this.ws = null
         // Some network error: Connection refused or so.
-        return ff(3)
+        ffo(3)
       }))
       // Because 'open' won't be envoked on opened socket.
       if(ws.readyState) {
         this.initSocket(ws)
-        ff(null)
+        ffo(null)
       } else {
         add_event(ws, 'open', once(() => {
           this.log('open')
           this.initSocket(ws)
-          return ff(null)
+          ffo(null)
         }))
       }
     })
   }
-
-  public get socket() {
-    return this.ws
-  }
-
+  public get socket() { return this.ws }
   public async ready() {
     return new Promise<void>((ff) => {
       if(this.open) {
@@ -165,7 +170,6 @@ class WebSocketClient {
       }
     })
   }
-
   public on(
     event_name: wsc.WSEvent,
     handler: (data: any) => any,
@@ -217,10 +221,7 @@ class WebSocketClient {
       }
       Object.assign(message, opts.top)
     }
-
-    config.pipes.forEach(
-      (pipe) => message_data = pipe(message_data)
-    )
+    config.pipes.forEach((pipe) => message_data = pipe(message_data))
 
     if(this.open === true) {
       (this.ws as wsc.Socket).send(config.encode(message_id, message_data, config))
@@ -228,20 +229,20 @@ class WebSocketClient {
       this.messages.push({
         send: () => (this.ws as wsc.Socket).send(config.encode(message_id, message_data, config))
       })
-      if(first_time_lazy) {
-        this.connect()
-      }
+      if(first_time_lazy) this.connect()
     } else if(this.open === null) {
       throw new Error('Attempting to send via closed WebSocket connection!')
     }
 
     return new Promise((ff, rj) => {
+      // TODO: Make it class Message.
       this.queue[message_id] = {
         ff,
         data_type: config.data_type,
         sent_time: config.timer ? Date.now() : null,
         timeout: sett(config.timeout, () => {
           if(this.queue[message_id]) {
+            this.call('timeout', message_data)
             rj({
               'Websocket timeout expired: ': config.timeout,
               'for the message ': message_data
@@ -253,17 +254,11 @@ class WebSocketClient {
     })
   }
 
+  // TODO: Add .on handlers to config!
   constructor(user_config: wsc.UserConfig = {}) {
     this.config = processConfig(user_config)
-    // Init.
     this.init_flush()
-    // Flags.
-    this.open = false
-    this.reconnect_timeout = null
-    this.forcibly_closed = false
-    if(!this.config.lazy) {
-      this.connect()
-    }
+    if(!this.config.lazy) this.connect()
   }
 }
 
