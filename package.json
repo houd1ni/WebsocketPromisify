@@ -41,7 +41,7 @@
     "prod": "npm run gentypes && npm run prod:es && npm run prod:cjs",
     "all": "npm run dev && npm run prod"
   },
-  "version": "2.6.1",
+  "version": "2.6.2",
   "type": "module",
   "exports": {
     ".": {
@@ -63,7 +63,6 @@
     "cross-env": "^7.0.3",
     "dts-bundle-generator": "^9.5.1",
     "nyc": "^17.1.0",
-    "pepka": "^1.6.3",
     "rollup": "^4.40.0",
     "rollup-plugin-typescript2": "^0.36.0",
     "ts-node": "^10.9.2",
@@ -74,6 +73,7 @@
   },
   "types": "./dist/bundle.d.ts",
   "dependencies": {
+    "pepka": "^1.6.3",
     "zipnum": "^2.0.0"
   }
 }
