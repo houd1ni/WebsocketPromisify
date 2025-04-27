@@ -10,3 +10,9 @@ export const sett = (
   a: number,
   b: { (): void; (...args: any[]): void; }
 ) => setTimeout(b, a)
+
+export const try_splice = <T = any>(arr: T[], el: T) => {
+  const i = arr.indexOf(el)
+  if(~i) return arr.splice(arr.indexOf(el), 1)
+  else return []
+}

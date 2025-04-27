@@ -1,6 +1,6 @@
 
 import { WebSocketServer } from 'ws'
-import { createServer, killServer } from './WS.js'
+import { createServer, killServer } from './WS'
 
 let port: number,
     server: WebSocketServer|null
@@ -12,6 +12,7 @@ export default async (new_port?: number) => {
   }
   return {
     server, port,
+    isRunning() {return Boolean(server)},
     shutDown: async () => { await killServer(); server=null }
   }
 }

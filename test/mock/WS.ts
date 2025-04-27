@@ -9,6 +9,7 @@ const createServer = (port = 40510) => new Promise<WebSocketServer>((ff, rj) => 
   server = new WebSocketServer({ port }, () => {
     server!.on('connection', (socket: WebSocket&{isAlive: boolean}) => {
       socket.on('message', (rawMessage: string) => {
+        // console.log({rawMessage: rawMessage.toString()})
         const {id, data} = JSON.parse(rawMessage)
         let response = ''
         if(data.shut) {

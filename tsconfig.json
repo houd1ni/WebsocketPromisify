@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "lib": [ "esnext", "DOM" ],
     "strictNullChecks": true,
     "target": "esnext",

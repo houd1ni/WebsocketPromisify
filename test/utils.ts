@@ -6,7 +6,7 @@ import WS from 'ws'
 
 export const createNew = (config = {}, port: number) => new WebSocketClient(Object.assign({
     url: 'ws://127.0.0.1:' + port,
-    // log: (...a) => console.log(...a),
+    // log: (...a: any[]) => console.log(...a),
     adapter: (host: string, protocols?: string|string[]) => new (native_ws || WS)(host, protocols)
   }, config)
 )
@@ -15,12 +15,14 @@ export const createNew = (config = {}, port: number) => new WebSocketClient(Obje
 export const timeout = (time: number, handler: AnyFunc) => async (context: AnyObject) => {
   let timer: NodeJS.Timeout
   try {
-    return await Promise.race([
+    await Promise.race([
       handler(context),
       new Promise((_resolve, reject) =>
         timer = setTimeout(() => reject(new Error('timeout')), time)
       )
     ])
+  } catch(e) {
+    throw e
   } finally {
     if(timer!) clearTimeout(timer)
   }

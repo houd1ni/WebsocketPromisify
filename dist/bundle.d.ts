@@ -47,6 +47,13 @@ declare namespace wsc {
 		top: any;
 		data_type: DataType;
 	}
+	interface Message {
+		msg: any;
+		ff(x: any): any;
+		data_type: DataType;
+		sent_time: number | null;
+		timeout: NodeJS.Timeout;
+	}
 }
 declare class WebSocketClient {
 	private open;
@@ -54,7 +61,6 @@ declare class WebSocketClient {
 	private forcibly_closed;
 	private reconnect_timeout;
 	private queue;
-	private messages;
 	private onReadyQueue;
 	private onCloseQueue;
 	private handlers;

@@ -2,7 +2,7 @@ import './types'
 import { Zipnum } from 'zipnum'
 import { add_event, sett } from './utils'
 import { processConfig } from './config'
-import { AnyFunc, once, T } from 'pepka'
+import { AnyFunc, F, once, qfilter, T } from 'pepka'
 
 const MAX_32 = 2**31 - 1
 const zipnum = new Zipnum()
@@ -21,16 +21,15 @@ class WebSocketClient {
   private ws: wsc.Socket|null = null
   private forcibly_closed = false
   private reconnect_timeout: NodeJS.Timeout|null = null
-  private queue = {}
-  private messages: any[] = []
+  private queue: Record<string, wsc.Message> = {}
   private onReadyQueue: AnyFunc[] = []
   private onCloseQueue: AnyFunc[] = []
   private handlers: EventHandlers = { open: [], close: [], message: [], error: [], timeout: [] }
   private config = <wsc.Config>{}
 
   private init_flush(): void {
-    this.queue    = {}  // data queuse
-    this.messages = []  // send() queue
+    // TODO: reject them or save somehow ?..
+    qfilter(F, this.queue)
   }
   private call(event_name: wsc.WSEvent, ...args: any[]) {
     // this.handlers.open[0]()
@@ -51,16 +50,14 @@ class WebSocketClient {
   }
 
   private initSocket(ws: wsc.Socket) {
-    const config = this.config
+    const {queue, config} = this
     this.open = true
     this.onReadyQueue.forEach((fn: Function) => fn())
     this.onReadyQueue.splice(0)
     const {id_key, data_key} = config.server
     // Works also on previously opened sockets that do not fire 'open' event.
     this.call('open', ws)
-    // Send all pending messages.
-    this.messages.forEach((message: any) => message.send())
-    // It's reconnecting.
+    for(const msg_id in queue) ws.send(queue[msg_id].msg)
     if(this.reconnect_timeout !== null) {
       clearInterval(this.reconnect_timeout)
       this.reconnect_timeout = null
@@ -74,6 +71,7 @@ class WebSocketClient {
     add_event(ws, 'close', async (...e) => {
       this.log('close')
       this.open = false
+      this.ws = null
       this.onCloseQueue.forEach((fn: Function) => fn())
       this.onCloseQueue.splice(0)
       this.call('close', ...e)
@@ -97,9 +95,6 @@ class WebSocketClient {
         }
         // TODO: test normal close by server. Would it be infinite ?
         reconnectFunc()
-      } else {
-        this.ws = null
-        this.open = false
       }
       // reset the flag to reuse.
       this.forcibly_closed = false
@@ -116,8 +111,6 @@ class WebSocketClient {
             this.log('message', data[data_key], time)
             // Play.
             q.ff(data[data_key])
-            clearTimeout(q.timeout)
-            delete this.queue[data[id_key]]
           }
         }
       } catch (err) {
@@ -141,7 +134,7 @@ class WebSocketClient {
       }
       const ffo = once(ff)
       add_event(ws, 'error', once((e) => {
-        this.log('error', 'status 3.')
+        this.log('error', 'status 3. Err: '+e.message)
         this.call('error', e)
         this.ws = null
         // Some network error: Connection refused or so.
@@ -163,11 +156,8 @@ class WebSocketClient {
   public get socket() { return this.ws }
   public async ready() {
     return new Promise<void>((ff) => {
-      if(this.open) {
-        ff()
-      } else {
-        this.onReadyQueue.push(ff)
-      }
+      if(this.open) ff()
+      else this.onReadyQueue.push(ff)
     })
   }
   public on(
@@ -209,10 +199,9 @@ class WebSocketClient {
     opts = <wsc.SendOptions>{}
   ): Promise<ResponseDataType> {
     this.log('send', message_data)
-    const config   = this.config
+    const {config, ws, forcibly_closed, queue} = this
     const message  = {}
     const data_key = config.server.data_key
-    const first_time_lazy = config.lazy && !this.open
 
     const message_id = zipnum.zip((Math.random()*(MAX_32-10))|0)
     if(typeof opts.top === 'object') {
@@ -223,21 +212,21 @@ class WebSocketClient {
     }
     config.pipes.forEach((pipe) => message_data = pipe(message_data))
 
-    if(this.open === true) {
-      (this.ws as wsc.Socket).send(config.encode(message_id, message_data, config))
-    } else if(this.open === false || first_time_lazy) {
-      this.messages.push({
-        send: () => (this.ws as wsc.Socket).send(config.encode(message_id, message_data, config))
-      })
-      if(first_time_lazy) this.connect()
-    } else if(this.open === null) {
+    if(forcibly_closed)
       throw new Error('Attempting to send via closed WebSocket connection!')
-    }
+    if(!this.open) this.connect()
+    const msg = await config.encode(message_id, message_data, config)
+    if(ws?.readyState===1) // The only opened state.
+      ws.send(msg)
 
     return new Promise((ff, rj) => {
-      // TODO: Make it class Message.
       this.queue[message_id] = {
-        ff,
+        msg, ff(x: any) {
+          ff(x)
+          // cleanup.
+          clearTimeout(this.timeout) // from this object!
+          delete queue[message_id]
+        },
         data_type: config.data_type,
         sent_time: config.timer ? Date.now() : null,
         timeout: sett(config.timeout, () => {
@@ -247,7 +236,7 @@ class WebSocketClient {
               'Websocket timeout expired: ': config.timeout,
               'for the message ': message_data
             })
-            delete this.queue[message_id]
+            delete queue[message_id]
           }
         })
       }

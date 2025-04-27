@@ -1,22 +1,17 @@
 import { createNew, timeout } from '../utils'
 import mockServer from '../mock/server'
-import { equals } from 'pepka'
+import { equals, wait } from 'pepka'
 import { test } from '../suite'
 
 /** Lazy connect */
-test('lazy', timeout(2e3, () => {
-  return new Promise<void>(async (ff, rj) => {
-    const {port} = await mockServer()
-    const ws = createNew({ lazy: true }, port)
+test('lazy', timeout(2e3, async () => {
+  const {port} = await mockServer()
+  const ws = createNew({ lazy: true }, port)
 
-    setTimeout(async () => {
-      if(ws.socket !== null) {
-        rj()
-      } else {
-        const msg = {echo: true, msg: 'hello!'}
-        const response = await ws.send(msg)
-        if(equals(response, msg)) ff(); else rj()
-      }
-    }, 500)
-  })
+  await wait(500)
+  if(ws.socket !== null) throw new Error('Socket is not open.')
+  else {
+    const msg = {echo: true, msg: 'hello!'}
+    if(!equals(await ws.send(msg), msg)) throw new Error('msg\s not equal.')
+  }
 }))

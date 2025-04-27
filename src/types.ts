@@ -55,4 +55,11 @@ declare namespace wsc {
     top: any
     data_type: DataType
   }
+
+  export interface Message {
+    msg: any, ff(x: any): any,
+    data_type: DataType,
+    sent_time: number | null,
+    timeout: NodeJS.Timeout
+  }
 }

@@ -11,10 +11,10 @@ import './specs/no-native-throws'
 import mockServer from './mock/server'
 import {test} from './suite'
 
-const {shutDown} = await mockServer()
+const {shutDown, isRunning} = await mockServer()
 test.after(() => {
   setTimeout(async () => {
-    await shutDown()
+    if(isRunning()) await shutDown()
     process.exit()
   }, 100)
 })
