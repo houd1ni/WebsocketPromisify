@@ -1,7 +1,7 @@
 import { createNew } from '../utils.js'
-import mockServer from '../mock/server'
+import mockServer from '../mock/server.js'
 import { equals } from 'pepka'
-import { test } from '../suite'
+import { test } from '../suite.js'
 
 /** Sends massages if they were .send() before connection is estabilished. */
 test('lazy send before open queued.', () => new Promise(async (ff, rj) => {
