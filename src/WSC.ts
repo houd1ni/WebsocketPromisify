@@ -52,6 +52,7 @@ class WebSocketClient {
   private initSocket(ws: wsc.Socket) {
     const {queue, config} = this
     this.open = true
+    this.ws = ws
     this.onReadyQueue.forEach((fn: Function) => fn())
     this.onReadyQueue.splice(0)
     const {id_key, data_key} = config.server
