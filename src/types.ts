@@ -11,7 +11,8 @@ declare namespace wsc {
     readyState: number
     send(...any: any[]): void
     close(): void
-    addEventListener(event: string, handler: ((event: any) => any), ...any: any[]): void
+    addEventListener: WebSocket["addEventListener"]
+    removeEventListener: WebSocket["removeEventListener"]
   }
 
   export type AsyncErrCode = Promise<number | null | {}>

@@ -5,6 +5,9 @@ export const native_ws = (() => {try {return WebSocket||null}catch { return null
 export const add_event = (o: wsc.Socket, e: string, handler: wsc.EventHandler) => {
   return o.addEventListener(e, handler)
 }
+export const rm_event = (o: wsc.Socket, e: string, handler: wsc.EventHandler) => {
+  return o.removeEventListener(e, handler)
+}
 
 export const sett = (
   a: number,

@@ -41,7 +41,7 @@
     "prod": "npm run gentypes && npm run prod:es && npm run prod:cjs",
     "all": "npm run dev && npm run prod"
   },
-  "version": "2.6.3",
+  "version": "2.6.4",
   "type": "module",
   "exports": {
     ".": {
@@ -57,19 +57,19 @@
     "@rollup/plugin-replace": "^6.0.2",
     "@rollup/plugin-terser": "^0.4.4",
     "@types/express": "^5.0.1",
-    "@types/node": "^22.15.2",
+    "@types/node": "^22.15.17",
     "@types/ws": "^8.18.1",
     "codecov": "^3.8.3",
     "cross-env": "^7.0.3",
     "dts-bundle-generator": "^9.5.1",
     "nyc": "^17.1.0",
-    "rollup": "^4.40.0",
+    "rollup": "^4.40.2",
     "rollup-plugin-typescript2": "^0.36.0",
     "ts-node": "^10.9.2",
-    "tsx": "^4.19.3",
+    "tsx": "^4.19.4",
     "typescript": "^5.8.3",
     "uvu": "^0.5.6",
-    "ws": "^8.18.1"
+    "ws": "^8.18.2"
   },
   "types": "./dist/bundle.d.ts",
   "dependencies": {

@@ -1,6 +1,6 @@
 import './types'
 import { Zipnum } from 'zipnum'
-import { add_event, sett } from './utils'
+import { add_event, rm_event, sett } from './utils'
 import { processConfig } from './config'
 import { AnyFunc, F, once, qfilter, T } from 'pepka'
 
@@ -127,7 +127,6 @@ class WebSocketClient {
       }
       const config = this.config
       const ws = config.socket || config.adapter(config.url, config.protocols)
-      this.ws = ws
       if(!ws || ws.readyState > 1) {
         this.ws = null
         this.log('error', 'ready() on closing or closed state! status 2.')
@@ -169,9 +168,19 @@ class WebSocketClient {
   ) {
     const _handler: wsc.EventHandler = (event) =>
       predicate(event) && handler(event)
-    return raw
-      ? add_event(this.ws as wsc.Socket, event_name, _handler)
-      : this.handlers[event_name].push(_handler)
+    if(raw) add_event(this.ws as wsc.Socket, event_name, _handler)
+    else this.handlers[event_name].push(_handler)
+    return _handler
+  }
+  public off(
+    event_name: wsc.WSEvent,
+    handler: (data: any) => any,
+    raw = false
+  ) {
+    if(raw) return rm_event(this.ws as wsc.Socket, event_name, handler)
+    const handlers = this.handlers[event_name]
+    const i = handlers.indexOf(handler)
+    if(~i) handlers.splice(i, 1)
   }
 
   public async close(): wsc.AsyncErrCode {

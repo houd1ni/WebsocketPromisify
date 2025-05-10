@@ -10,7 +10,8 @@ declare namespace wsc {
 		readyState: number;
 		send(...any: any[]): void;
 		close(): void;
-		addEventListener(event: string, handler: ((event: any) => any), ...any: any[]): void;
+		addEventListener: WebSocket["addEventListener"];
+		removeEventListener: WebSocket["removeEventListener"];
 	}
 	type AsyncErrCode = Promise<number | null | {}>;
 	type EventHandler = (e: any) => void;
@@ -72,7 +73,8 @@ declare class WebSocketClient {
 	private connect;
 	get socket(): wsc.Socket | null;
 	ready(): Promise<void>;
-	on(event_name: wsc.WSEvent, handler: (data: any) => any, predicate?: (data: any) => boolean, raw?: boolean): number | void;
+	on(event_name: wsc.WSEvent, handler: (data: any) => any, predicate?: (data: any) => boolean, raw?: boolean): wsc.EventHandler;
+	off(event_name: wsc.WSEvent, handler: (data: any) => any, raw?: boolean): void;
 	close(): wsc.AsyncErrCode;
 	/**  .send(your_data) wraps request to server with {id: `hash`, data: `actually your data`},
 	  returns a Promise that will be rejected after a timeout or
