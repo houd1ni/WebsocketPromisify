@@ -61,6 +61,8 @@ Default constructor config is
     timeout: 1400,
     // Reconnect timeout in seconds or null.
     reconnect: 2,
+    // Attempts before silently givin' up.
+    reconnection_attempts: 25 // defaults to Infinity.
     // Lazy connect: connects only if something sent (then sends all of them!)
     lazy: false,
     // Existing socket if you already have one to augment with this force.

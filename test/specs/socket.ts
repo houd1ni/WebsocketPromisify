@@ -5,7 +5,7 @@ import { test } from '../suite'
 /** Socket property check. */
 test('sockets', timeout(1e4, () => new Promise<void>(async (ff, rj) => {
   const {port} = await mockServer()
-  const ws = createNew({}, port)
+  const ws = await createNew({}, port)
 
   await ws.ready()
 

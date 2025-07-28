@@ -3,12 +3,11 @@ import mockServer from '../mock/server'
 import { equals, wait } from 'pepka'
 import { test } from '../suite'
 
-/** Lazy connect */
+/** Lazy connect. */
 test('lazy', timeout(2e3, async () => {
   const {port} = await mockServer()
-  const ws = createNew({ lazy: true }, port)
+  const ws = await createNew({ lazy: true }, port)
 
-  await wait(500)
   if(ws.socket !== null) throw new Error('Socket is not open.')
   else {
     const msg = {echo: true, msg: 'hello!'}

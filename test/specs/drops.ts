@@ -6,7 +6,7 @@ import { wait } from 'pepka'
 /** Rejects messages by timout */
 test('drops', () => new Promise(async (ff, rj) => {
   const {port, shutDown} = await mockServer()
-  const ws = createNew({timeout: 500}, port)
+  const ws = await createNew({timeout: 500}, port)
 
   await shutDown()
   await wait(200)

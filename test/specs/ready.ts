@@ -5,7 +5,7 @@ import { test } from '../suite'
 /** Ready method. */
 test('ready', timeout(4e3, async () => {
   const {port} = await mockServer()
-  const ws = createNew({}, port)
+  const ws = await createNew({}, port)
 
   await ws.ready()
   if(!ws.socket) throw new Error()

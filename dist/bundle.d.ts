@@ -25,6 +25,7 @@ declare namespace wsc {
 		url: string;
 		timeout: number;
 		reconnect: number;
+		reconnection_attempts: number;
 		lazy: boolean;
 		socket: Socket | null;
 		adapter: (host: string, protocols?: string[]) => Socket;
@@ -57,7 +58,6 @@ declare namespace wsc {
 	}
 }
 declare class WebSocketClient {
-	private open;
 	private ws;
 	private forcibly_closed;
 	private reconnect_timeout;
@@ -66,16 +66,21 @@ declare class WebSocketClient {
 	private onCloseQueue;
 	private handlers;
 	private config;
+	private pinger;
+	private get opened();
 	private init_flush;
 	private call;
 	private log;
+	private resetPing;
 	private initSocket;
+	private opening;
 	private connect;
 	get socket(): wsc.Socket | null;
 	ready(): Promise<void>;
 	on(event_name: wsc.WSEvent, handler: (data: any) => any, predicate?: (data: any) => boolean, raw?: boolean): wsc.EventHandler;
 	off(event_name: wsc.WSEvent, handler: (data: any) => any, raw?: boolean): void;
 	close(): wsc.AsyncErrCode;
+	open(): Promise<number | null> | undefined;
 	/**  .send(your_data) wraps request to server with {id: `hash`, data: `actually your data`},
 	  returns a Promise that will be rejected after a timeout or
 	  resolved if server returns the same signature: {id: `same_hash`, data: `response data`}.

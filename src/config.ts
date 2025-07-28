@@ -10,6 +10,7 @@ const default_config = <wsc.Config>{
   url: 'localhost',
   timeout: 1400,
   reconnect: 2,       // Reconnect timeout in seconds or null.
+  reconnection_attempts: Infinity,
   lazy: false,
   socket: null,
   adapter: ((host, protocols) => new WebSocket(host, protocols)),
