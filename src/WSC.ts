@@ -123,6 +123,7 @@ class WebSocketClient {
       } catch (err) {
         console.error(err, `WSP: Decode error. Got: ${e.data}`)
       }
+      this.resetPing()
     })
   }
 
@@ -250,15 +251,14 @@ class WebSocketClient {
     return new Promise((ff, rj) => {
       this.queue[message_id] = {
         msg, ff(x: any) {
-          ff(x)
-          // cleanup.
           clearTimeout(this.timeout) // from this object!
           delete queue[message_id]
+          ff(x)
         },
         data_type: config.data_type,
         sent_time: config.timer ? Date.now() : null,
         timeout: sett(config.timeout, () => {
-          if(this.queue[message_id]) {
+          if(message_id in this.queue) {
             this.call('timeout', message_data)
             rj({'Websocket timeout expired': config.timeout, 'for the message': message_data})
             delete queue[message_id]
