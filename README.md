@@ -48,7 +48,7 @@ Default constructor config is
 ```javascript
 {
   // You can also use plain text and blobs in future.
-  data_type: 'json',
+    data_type: 'json',
   // Debug features. Not required.
     log: ((event, time, message) => null),
     // Will count milliseconds for responses and put them to log function above.
@@ -61,10 +61,10 @@ Default constructor config is
     timeout: 1400,
     // Reconnect timeout in seconds or null.
     reconnect: 2,
-    // Attempts before silently givin' up. Defaults to Infinity.
-    reconnection_attempts: 25
-    // Time in seconds after the connection is closed if nothing was sent explicitly by send(). Defaults to Infinity.
-    max_idle_time: 25
+    // Attempts before silently givin' up.
+    reconnection_attempts: Infinity,
+    // Time in seconds after the connection is closed if nothing was sent explicitly by send().
+    max_idle_time: Infinity,
     // Lazy connect: connects only if something sent (then sends all of them!)
     lazy: false,
     // Existing socket if you already have one to augment with this force.
