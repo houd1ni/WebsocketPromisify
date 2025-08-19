@@ -130,7 +130,6 @@ class WebSocketClient {
         console.error(err, `WSP: Decode error. Got: ${e.data}`)
       }
       this.resetPing()
-      this.resetIdle()
     })
   }
 
