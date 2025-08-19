@@ -250,8 +250,8 @@ class WebSocketClient {
     if(err) throw new Error('ERR while opening connection #'+err)
     if(this.opened) {
       this.ws!.send(msg)
-      if(!_is_ping) this.resetPing()
-      this.resetIdle()
+      this.resetPing()
+      if(!_is_ping) this.resetIdle()
     }
 
     return new Promise((ff, rj) => {
