@@ -26,6 +26,7 @@ declare namespace wsc {
 		timeout: number;
 		reconnect: number;
 		reconnection_attempts: number;
+		max_idle_time: number;
 		lazy: boolean;
 		socket: Socket | null;
 		adapter: (host: string, protocols?: string[]) => Socket;
@@ -59,19 +60,21 @@ declare namespace wsc {
 }
 declare class WebSocketClient {
 	private ws;
-	private forcibly_closed;
+	private intentionally_closed;
 	private reconnect_timeout;
 	private queue;
 	private onReadyQueue;
 	private onCloseQueue;
 	private handlers;
 	private config;
-	private pinger;
+	private ping_timer;
+	private idle_timer;
 	private get opened();
 	private init_flush;
 	private call;
 	private log;
 	private resetPing;
+	private resetIdle;
 	private initSocket;
 	private opening;
 	private connect;

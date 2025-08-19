@@ -32,6 +32,7 @@ declare namespace wsc {
     timeout: number
     reconnect: number
     reconnection_attempts: number
+    max_idle_time: number
     lazy: boolean
     socket: Socket | null
     adapter: (host: string, protocols?: string[]) => Socket
