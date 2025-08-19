@@ -8,6 +8,7 @@ const MAX_32 = 2**31 - 1
 const zipnum = new Zipnum()
 const callit = callWith([])
 const isNumber = both(typeIs('Number'), notf(isNaN))
+const ping_send_opts: wsc.SendOptions = {_is_ping: true}
 
 type EventHandler<T extends keyof WebSocketEventMap> = AnyFunc<any, [WebSocketEventMap[T]]>
 type EventHandlers = {
@@ -56,7 +57,7 @@ class WebSocketClient {
       this.ping_timer = sett(ping.interval*1e3, async () => {
         const {ping_timer, opened} = this
         if(opened) {
-          await this.send(ping.content)
+          await this.send(ping.content, ping_send_opts)
           this.resetPing()
         } else clearTimeout(ping_timer!)
       })
@@ -232,13 +233,14 @@ class WebSocketClient {
     const {config, queue} = this
     const message = {}
     const {pipes, server: {data_key}} = config
+    const {top, _is_ping} = opts
 
     const message_id = zipnum.zip((Math.random()*(MAX_32-10))|0)
-    if(typeof opts.top === 'object') {
-      if(opts.top[data_key]) {
+    if(typeof top === 'object') {
+      if(top[data_key]) {
         throw new Error('Attempting to set data key/token via send() options!')
       }
-      Object.assign(message, opts.top)
+      Object.assign(message, top)
     }
     for(const pipe of pipes) message_data = pipe(message_data)
     const [msg, err] = await Promise.all([
@@ -248,7 +250,7 @@ class WebSocketClient {
     if(err) throw new Error('ERR while opening connection #'+err)
     if(this.opened) {
       this.ws!.send(msg)
-      this.resetPing()
+      if(!_is_ping) this.resetPing()
       this.resetIdle()
     }
 

@@ -54,10 +54,11 @@ declare namespace wsc {
 
   export type UserConfig = Partial<Config>
 
-  export interface SendOptions {
+  export type SendOptions = Partial<{
     top: any
     data_type: DataType
-  }
+    _is_ping: boolean
+  }>
 
   export interface Message {
     msg: any, ff(x: any): any,

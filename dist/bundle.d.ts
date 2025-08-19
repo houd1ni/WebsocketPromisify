@@ -46,10 +46,11 @@ declare namespace wsc {
 		};
 	}
 	type UserConfig = Partial<Config>;
-	interface SendOptions {
+	type SendOptions = Partial<{
 		top: any;
 		data_type: DataType;
-	}
+		_is_ping: boolean;
+	}>;
 	interface Message {
 		msg: any;
 		ff(x: any): any;
