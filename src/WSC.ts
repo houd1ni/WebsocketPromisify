@@ -5,6 +5,7 @@ import { processConfig } from './config'
 import { AnyFunc, both, callWith, F, isNil, notf, once, qfilter, T, typeIs } from 'pepka'
 
 const MAX_32 = 2**31 - 1
+const { random } = Math
 const zipnum = new Zipnum()
 const callit = callWith([])
 const isNumber = both(typeIs('Number'), notf(isNaN))
@@ -170,7 +171,8 @@ class WebSocketClient {
   public get socket() { return this.ws }
   public async ready() {
     return new Promise<void>((ff) => {
-      if(this.opened) ff()
+      if(this.config.lazy) ff() // FIXME: (possibly) breaking change ?? At least minor ver bump with a notice!!!
+      else if(this.opened) ff()
       else this.onReadyQueue.push(ff)
     })
   }
@@ -234,7 +236,7 @@ class WebSocketClient {
     const {pipes, server: {data_key}} = config
     const {top, _is_ping} = opts
 
-    const message_id = zipnum.zip((Math.random()*(MAX_32-10))|0)
+    const message_id = zipnum.zip((random()*(MAX_32-10))|0)
     if(typeof top === 'object') {
       if(top[data_key]) {
         throw new Error('Attempting to set data key/token via send() options!')
@@ -251,7 +253,10 @@ class WebSocketClient {
       this.ws!.send(msg)
       this.resetPing()
       if(!_is_ping) this.resetIdle()
-    }
+    } // TODO: Сделать сэттер элементов конфигурации чтобы двигать таймауты.
+      // И эвент, когда схема наша, а соответствующего элемента очереди не ма.
+      // Или добавить флажок к эвенту 'message'.
+      // И событие 'line' со значением on: boolean. Критерии??
 
     return new Promise((ff, rj) => {
       this.queue[message_id] = {
