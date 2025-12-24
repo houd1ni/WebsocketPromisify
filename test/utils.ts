@@ -12,7 +12,7 @@ export const createNew = (config = {} as wsc.UserConfig, port: number) => new Pr
   }, config))
   if(ws.socket?.readyState===1 || config.lazy) return ff(ws)
   ws.on('error', rj)
-  ws.on('open', () => {console.log('OPEN!'); ff(ws)})
+  ws.on('open', () => {ff(ws)})
 })
 
 // Inspired by tinchoz49 https://github.com/lukeed/uvu/issues/33#issuecomment-879870292

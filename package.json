@@ -41,7 +41,7 @@
     "prod": "npm run gentypes && npm run prod:es && npm run prod:cjs",
     "all": "npm run dev && npm run prod"
   },
-  "version": "2.8.3",
+  "version": "2.9.0-beta.1",
   "type": "module",
   "exports": {
     ".": {

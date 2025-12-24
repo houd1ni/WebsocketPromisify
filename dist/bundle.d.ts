@@ -56,7 +56,6 @@ declare namespace wsc {
 		ff(x: any): any;
 		data_type: DataType;
 		sent_time: number | null;
-		timeout: NodeJS.Timeout;
 	}
 }
 declare class WebSocketClient {
@@ -85,11 +84,13 @@ declare class WebSocketClient {
 	off(event_name: wsc.WSEvent, handler: (data: any) => any, raw?: boolean): void;
 	close(): wsc.AsyncErrCode;
 	open(): Promise<number | null> | undefined;
+	private prepareMessage;
 	/**  .send(your_data) wraps request to server with {id: `hash`, data: `actually your data`},
 	  returns a Promise that will be rejected after a timeout or
 	  resolved if server returns the same signature: {id: `same_hash`, data: `response data`}.
 	*/
 	send<RequestDataType = any, ResponseDataType = any>(message_data: RequestDataType, opts?: wsc.SendOptions): Promise<ResponseDataType>;
+	stream<RequestDataType = any, ResponseDataType = any>(message_data: RequestDataType, opts?: wsc.SendOptions): AsyncGenerator<ResponseDataType, void, unknown>;
 	constructor(user_config?: wsc.UserConfig);
 }
 

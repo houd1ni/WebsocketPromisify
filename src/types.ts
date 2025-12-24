@@ -16,7 +16,7 @@ declare namespace wsc {
   }
 
   export type AsyncErrCode = Promise<number | null | {}>
-  
+
   export type EventHandler = (e: any) => void
 
   export type DataPipe = (message: any) => any
@@ -63,7 +63,6 @@ declare namespace wsc {
   export interface Message {
     msg: any, ff(x: any): any,
     data_type: DataType,
-    sent_time: number | null,
-    timeout: NodeJS.Timeout
+    sent_time: number | null
   }
 }

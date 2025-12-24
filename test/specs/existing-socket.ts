@@ -25,12 +25,10 @@ test('existing_socket', () => new Promise(async (ff, rj) => {
   const ws2_0 = new WS(existing_addr)
 
   ws2_0.addEventListener('open', async () => {
-    console.log('START')
     const ws2 = await createNew({socket: ws2_0}, port)
-    console.log({ws1})
 
     if(ws2.socket?.readyState !== 1) return rj('Bad echo.')
-  
+
     const msg2 = {echo: true, msg: 'existing_socket!'}
     const response2 = await ws2.send(msg2)
 
