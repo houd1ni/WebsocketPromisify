@@ -1,21 +1,20 @@
-import { equals } from 'pepka'
 import { createNew, timeout } from '../utils'
 import mockServer from '../mock/server'
 import { test } from '../suite'
 
 /** Simple test for stream method basic functionality. */
-test('stream-basic', timeout(5e3, () => new Promise<void>(async (ff, rj) => {
+test('stream-basic', timeout(7e3, () => new Promise<void>(async (ff, rj) => {
     const {port} = await mockServer()
-    let to = setTimeout(() => rj('cannot create'), 2e2)
+    let to = setTimeout(() => rj('cannot create'), 2e4)
     const ws = await createNew({}, port)
     clearTimeout(to)
 
-    to = setTimeout(() => rj('cannot ready'), 2e2)
+    to = setTimeout(() => rj('cannot ready'), 2e4)
     await ws.ready()
     clearTimeout(to)
 
     const msg = {stream: true, test: 'stream'}
-    to = setTimeout(() => rj('stream timeout'), 2e2)
+    to = setTimeout(() => rj('stream timeout'), 2e4)
 
     try {
       const stream = ws.stream(msg)

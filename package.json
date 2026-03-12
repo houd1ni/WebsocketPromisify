@@ -41,7 +41,7 @@
     "prod": "npm run gentypes && npm run prod:es && npm run prod:cjs",
     "all": "npm run dev && npm run prod"
   },
-  "version": "2.9.0-beta.1",
+  "version": "2.10.0",
   "type": "module",
   "exports": {
     ".": {
@@ -52,28 +52,28 @@
     "./src": "./src/*"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^29.0.0",
+    "@rollup/plugin-commonjs": "^29.0.2",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-replace": "^6.0.3",
-    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-terser": "^1.0.0",
     "@types/express": "^5.0.6",
-    "@types/node": "^25.0.3",
+    "@types/node": "^25.4.0",
     "@types/ws": "^8.18.1",
-    "codecov": "^3.8.3",
+    "codecov": "^3.6.3",
     "cross-env": "^10.1.0",
     "dts-bundle-generator": "^9.5.1",
-    "nyc": "^17.1.0",
-    "rollup": "^4.54.0",
+    "nyc": "^18.0.0",
+    "rollup": "^4.59.0",
     "rollup-plugin-typescript2": "^0.36.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "uvu": "^0.5.6",
-    "ws": "^8.18.3"
+    "ws": "^8.19.0"
   },
   "types": "./dist/bundle.d.ts",
   "dependencies": {
-    "pepka": "^1.6.10",
-    "zipnum": "^2.0.0"
+    "pepka": "^1.6.23",
+    "zipnum": "^2.1.3"
   }
 }

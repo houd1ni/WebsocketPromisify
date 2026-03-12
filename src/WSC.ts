@@ -1,8 +1,8 @@
-import './types'
+import { AnyFunc, AnyObject, both, callWith, F, isNil, notf, once, qfilter, T, tap, typeIs } from 'pepka'
 import { Zipnum } from 'zipnum'
-import { add_event, rm_event, sett } from './utils'
 import { processConfig } from './config'
-import { AnyFunc, AnyObject, both, callWith, F, isNil, notf, once, qfilter, T, typeIs } from 'pepka'
+import './types'
+import { add_event, rm_event, sett } from './utils'
 
 const MAX_32 = 2**31 - 1
 const { random } = Math
@@ -10,6 +10,7 @@ const zipnum = new Zipnum()
 const callit = callWith([])
 const isNumber = both(typeIs('Number'), notf(isNaN))
 const ping_send_opts: wsc.SendOptions = {_is_ping: true}
+const clearTO = (to: NodeJS.Timeout|null) => to && clearTimeout(to)
 
 type EventHandler<T extends keyof WebSocketEventMap> = AnyFunc<any, [WebSocketEventMap[T]]>
 type EventHandlers = {
@@ -24,7 +25,7 @@ const genid = (q: AnyObject) => {
   return id in q ? genid(q) : id
 }
 
-class WebSocketClient {
+export class WebSocketClient {
   private ws: wsc.Socket|null = null
   private intentionally_closed = false
   private reconnect_timeout: NodeJS.Timeout|null = null
@@ -44,16 +45,16 @@ class WebSocketClient {
   private call(event_name: wsc.WSEvent, ...args: any[]) {
     for(const h of this.handlers[event_name]) h(...args)
   }
-
-  private log(event: string, message: any = null, time: number|null = null): void {
+  private log(event: wsc.WSEvent, message: any = null, time: number|null = null): void {
     const {config} = this
-    if(time === null)
-      if(config.timer) config.log(event, null, message)
-      else config.log(event, message)
-    else
-      config.log(event, time, message)
+    setTimeout(() => {
+      if(time === null)
+        if(config.timer) config.log(event, null, message)
+        else config.log(event, message)
+      else
+        config.log(event, time, message)
+    })
   }
-
   private resetPing() {
     const {config: {ping}, ping_timer} = this
     if(ping) {
@@ -69,6 +70,7 @@ class WebSocketClient {
     }
   }
 
+  // FIXME: Make some version where it could work faster (for streaming).
   private resetIdle() {
     const {config: {max_idle_time: time}, idle_timer} = this
     if(time!==Infinity) {
@@ -121,7 +123,8 @@ class WebSocketClient {
       try {
         const data = config.decode(e.data)
         this.call('message', {...e, data})
-        if(data[id_key]) {
+        let internal = false
+        if(typeIs('Object', data) && id_key in data) {
           const q = this.queue[data[id_key]]
           if(q) {
             // Debug, Log.
@@ -129,15 +132,16 @@ class WebSocketClient {
             this.log('message', data[data_key], time)
             // Play.
             q.ff(data[data_key])
+            internal = true
           }
         }
+        if(!internal) this.log('message-ext', data)
       } catch (err) {
         console.error(err, `WSP: Decode error. Got: ${e.data}`)
       }
       this.resetPing()
     })
   }
-
   private opening = false
   private connect() { // returns status if won't open or null if ok.
     return new Promise<null|number>((ff) => {
@@ -175,8 +179,7 @@ class WebSocketClient {
   public get socket() { return this.ws }
   public async ready() {
     return new Promise<void>((ff) => {
-      if(this.config.lazy) ff() // FIXME: (possibly) breaking change ?? At least minor ver bump with a notice!!!
-      else if(this.opened) ff()
+      if(this.config.lazy || this.opened) ff() // FIXME: (possibly) breaking change ?? At least minor ver bump with a notice!!!
       else this.onReadyQueue.push(ff)
     })
   }
@@ -202,7 +205,6 @@ class WebSocketClient {
     const i = handlers.indexOf(handler)
     if(~i) handlers.splice(i, 1)
   }
-
   public async close(): wsc.AsyncErrCode {
     return new Promise((ff, rj) => {
       if(this.ws === null) {
@@ -218,17 +220,15 @@ class WebSocketClient {
       }
     })
   }
-
   public open() {
     if(!this.opened) {
       this.intentionally_closed = false
       return this.connect()
     }
   }
-
   // TODO: Сделать сэттер элементов конфигурации чтобы двигать таймауты.
   // И эвент, когда схема наша, а соответствующего элемента очереди не ма.
-  // Или добавить флажок к эвенту 'message'.
+  // Или добавить флажок к эвенту 'message'.F
   // И событие 'line' со значением on: boolean. Критерии?
   private async prepareMessage<RequestDataType = any>(
     message_data: RequestDataType,
@@ -250,12 +250,7 @@ class WebSocketClient {
       this.connect()
     ])
     if(err) throw new Error('ERR while opening connection #'+err)
-    if(this.opened) {
-      this.ws!.send(msg)
-      this.resetPing()
-      if(!_is_ping) this.resetIdle()
-    }
-    const cleanup = () => delete this.queue[id]
+    const cleanup = tap(() => delete this.queue[id])
     const timeout = (rj: AnyFunc) => sett(config.timeout, () => {
       if(id in queue) {
         this.call('timeout', message_data)
@@ -263,9 +258,13 @@ class WebSocketClient {
         cleanup()
       }
     })
-    return { message_id: id, msg, timeout, cleanup }
+    if(this.opened) {
+      sett(0, () => this.ws!.send(msg))
+      this.resetPing()
+      if(!_is_ping) this.resetIdle()
+    }
+    return { id, msg, timeout, cleanup }
   }
-
   /**  .send(your_data) wraps request to server with {id: `hash`, data: `actually your data`},
     returns a Promise that will be rejected after a timeout or
     resolved if server returns the same signature: {id: `same_hash`, data: `response data`}.
@@ -274,45 +273,42 @@ class WebSocketClient {
     message_data: RequestDataType,
     opts = <wsc.SendOptions>{}
   ): Promise<ResponseDataType> {
-    const {message_id, msg, timeout, cleanup} = await this.prepareMessage(message_data, opts)
+    const {id, msg, timeout, cleanup} = await this.prepareMessage(message_data, opts)
     const {queue, config} = this
-
     return new Promise<ResponseDataType>((ff, rj) => {
       const to = timeout(rj)
-      queue[message_id] = {
+      queue[id] = {
         msg,
         data_type: config.data_type,
         sent_time: config.timer ? Date.now() : null,
         ff(x: any) {
-          clearTimeout(to)
+          clearTO(to)
           ff(x)
         }
       }
     }).finally(cleanup)
   }
-
+  // FIXME: rejects into ff somehow.
   public async *stream<RequestDataType = any, ResponseDataType = any>(
     message_data: RequestDataType,
     opts = <wsc.SendOptions>{}
   ): AsyncGenerator<ResponseDataType, void, unknown> {
-    const {message_id, msg, timeout, cleanup} = await this.prepareMessage(message_data, opts)
+    const {id, msg, timeout, cleanup} = await this.prepareMessage(message_data, opts)
     const {queue, config} = this
     let done = false, fulfill: AnyFunc, to: NodeJS.Timeout|null = null
-    queue[message_id] = {
+    queue[id] = {
       msg,
       ff: (msg: ResponseDataType&{done?: boolean}) => {
-        if(to) {clearTimeout(to); to=null}
-        if(msg?.done) { cleanup(); done=true }
         fulfill(msg)
+        if(msg?.done) { cleanup(); done=true }
       },
       data_type: config.data_type,
       sent_time: config.timer ? Date.now() : null
     }
     while(!done) yield await new Promise<ResponseDataType>((ff, rj) => {
-      to = timeout(rj), fulfill=ff
-    })
+      to=timeout(rj); fulfill=ff
+    }).catch((e) => cleanup(e)).finally(() => {clearTO(to); to=null})
   }
-
   // TODO: Add .on handlers to config!
   constructor(user_config: wsc.UserConfig = {}) {
     this.config = processConfig(user_config)

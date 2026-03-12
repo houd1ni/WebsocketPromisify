@@ -1,6 +1,6 @@
 
 import WebSocket, { WebSocketServer } from 'ws'
-import {noop} from 'pepka'
+import {add, compose, genBy, identity, noop, wait} from 'pepka'
 
 let server: WebSocketServer|null = null
 
@@ -8,7 +8,7 @@ const createServer = (port = 40510) => new Promise<WebSocketServer>((ff, rj) => 
   if(server) return rj('The server is already running!')
   server = new WebSocketServer({ port }, () => {
     server!.on('connection', (socket: WebSocket&{isAlive: boolean}) => {
-      socket.on('message', (rawMessage: string) => {
+      socket.on('message', async (rawMessage: string) => {
         // console.log({rawMessage: rawMessage.toString()})
         const {id, data} = JSON.parse(rawMessage)
         let response = ''
@@ -21,23 +21,23 @@ const createServer = (port = 40510) => new Promise<WebSocketServer>((ff, rj) => 
           response = data
         } else if(data.stream) {
           // Handle streaming responses
-          const chunks = data.chunks || [1, 2, 3] // Default to 3 chunks
-          const delay = data.delay || 100 // Default delay between chunks
+          const chunks = genBy(compose(add(1), identity), 20) // Generate 20 chunks
+          // console.log(chunks)
+          const delay = 2 // 20ms delay between chunks for reliable delivery
 
           if(data.multi) {
             // Multi-chunk streaming
-            chunks.forEach((chunk: any, index: number) => {
-              setTimeout(() => {
-                socket.send(JSON.stringify({
-                  id,
-                  data: {
-                    ...data,
-                    chunk: chunk,
-                    done: index === chunks.length - 1 // Last chunk gets done: true
-                  }
-                }))
-              }, index * delay)
-            })
+            for(const i in chunks) {
+              const chunk = chunks[i]
+              socket.send(JSON.stringify({
+                id,
+                data: {
+                  ...data, chunk,
+                  done: +i === chunks.length - 1 // Last chunk gets done: true
+                }
+              }))
+              await wait(delay)
+            }
           } else {
             // Single response
             socket.send(JSON.stringify({

@@ -1,8 +1,8 @@
 import commonjs from '@rollup/plugin-commonjs'
 import resolve from '@rollup/plugin-node-resolve'
-import typescript from 'rollup-plugin-typescript2'
-import terser from '@rollup/plugin-terser'
 import replace from '@rollup/plugin-replace'
+import terser from '@rollup/plugin-terser'
+import typescript from 'rollup-plugin-typescript2'
 import tsc from 'typescript'
 
 export default {
@@ -32,9 +32,7 @@ export default {
     process.env.NODE_ENV!='development' && terser(),
     replace({
       preventAssignment: true,
-      values: {
-        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
-      }
+      values: { 'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV) }
     })
   ]
 }

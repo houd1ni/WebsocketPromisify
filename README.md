@@ -11,7 +11,7 @@ const responseData = await ws.send({catSaid: 'Meow!'})
 ```
 
 // If you detected some bug, want some stuff to be added, feel free to open an issue!
-Large data support (chunking), plugins, streams and different server-side implementations are coming.
+Large data support (chunking), plugins and different server-side implementations are coming.
 To see a Node.js server-side part example, please, take a look on test/mock in github repo.
 
 
@@ -21,6 +21,7 @@ Features (almost all are tunable via constructor config below.)
 - ES-module and commonjs built-in.
 - Types (d.ts) included.
 - Automatically reconnects.
+- Streams are supported. For example, you can stream your AI response.
 - Supports existent native WebSocket or ws-like implementation (ws npm package) via `socket` property.
 - And provide your own socket instance via socket config prop.
 - Any id and data keys to negotiate with your back-end.
@@ -71,7 +72,7 @@ Default constructor config is
     socket: null,
     // You can set your own middleware here.
     adapter: ((host, protocols) => new WebSocket(host, protocols)),
-    // You can replace original serialisation to your own or even binary stuff.
+    // You can replace original serialisation to your own or even binary stuff. Eg MessagePack or CBOR.
     encode: (message_id, message_data, config) => data,
     // You can replace original deserialisation to your own or even
     //     making the message object from binary data.
@@ -106,14 +107,16 @@ Methods:
   ready()
   // sends any type of message and returns a Promise.
   send(message),
+  // Streams as async generator, resolving in chunks.
+  // The server must send the same id for chunks then add done: true in the last one.
+  *stream(message),
   // .addEventListener with optional predicate that works after reconnections.
   on(event_name, handler, predicate = (WebSocketEvent) => true),
   // Closes the connection and free up memory. Returns Promise that it has been done.
   close()
-
 ```
 
-Example:
+Example (more in `tests` dir in the repo):
 ```javascript
 
   import WSP from 'wspromisify' // or const WSP = require('wspromisify') in Node.

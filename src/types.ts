@@ -4,7 +4,7 @@ declare namespace wsc {
     [key: string]: any
   }
 
-  export type WSEvent = 'open' | 'message' | 'close' | 'error' | 'timeout'
+  export type WSEvent = 'open' | 'message' | 'message-ext' | 'close' | 'error' | 'timeout' | 'reconnect' | 'send' | 'ping'
 
   /** Minimal socket-like interface. */
   interface Socket {
