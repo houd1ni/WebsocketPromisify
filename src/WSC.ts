@@ -1,8 +1,8 @@
-import { AnyFunc, AnyObject, both, callWith, F, isNil, notf, once, qfilter, T, tap, typeIs } from 'pepka'
-import { Zipnum } from 'zipnum'
-import { processConfig } from './config'
-import './types'
-import { add_event, rm_event, sett } from './utils'
+import { AnyFunc, AnyObject, both, callWith, F, isNil, notf, once, qfilter, T, tap, typeIs } from 'pepka';
+import { Zipnum } from 'zipnum';
+import { processConfig } from './config';
+import './types';
+import { add_event, rm_event, sett } from './utils';
 
 const MAX_32 = 2**31 - 1
 const { random } = Math
@@ -94,7 +94,6 @@ export class WebSocketClient {
     }
     this.resetPing(); this.resetIdle()
     add_event(ws, 'close', async (...e) => {
-      this.log('close')
       this.ws = null
       this.onCloseQueue.forEach(callit)
       this.onCloseQueue.splice(0)
@@ -122,7 +121,7 @@ export class WebSocketClient {
     add_event(ws, 'message', (e) => {
       try {
         const data = config.decode(e.data)
-        this.call('message', {...e, data})
+        this.call('message', {...e, data}) // TODO: Breaking: make message-ext another handler.
         let internal = false
         if(typeIs('Object', data) && id_key in data) {
           const q = this.queue[data[id_key]]
@@ -258,12 +257,12 @@ export class WebSocketClient {
         cleanup()
       }
     })
-    if(this.opened) {
-      sett(0, () => this.ws!.send(msg))
-      this.resetPing()
-      if(!_is_ping) this.resetIdle()
-    }
-    return { id, msg, timeout, cleanup }
+    const send = () => this.opened && (
+      this.ws!.send(msg),
+      this.resetPing(),
+      (!_is_ping && this.resetIdle())
+    )
+    return { id, msg, timeout, cleanup, send }
   }
   /**  .send(your_data) wraps request to server with {id: `hash`, data: `actually your data`},
     returns a Promise that will be rejected after a timeout or
@@ -273,7 +272,7 @@ export class WebSocketClient {
     message_data: RequestDataType,
     opts = <wsc.SendOptions>{}
   ): Promise<ResponseDataType> {
-    const {id, msg, timeout, cleanup} = await this.prepareMessage(message_data, opts)
+    const {id, msg, timeout, cleanup, send} = await this.prepareMessage(message_data, opts)
     const {queue, config} = this
     return new Promise<ResponseDataType>((ff, rj) => {
       const to = timeout(rj)
@@ -285,7 +284,7 @@ export class WebSocketClient {
           clearTO(to)
           ff(x)
         }
-      }
+      }; send()
     }).finally(cleanup)
   }
   // FIXME: rejects into ff somehow.
@@ -293,18 +292,18 @@ export class WebSocketClient {
     message_data: RequestDataType,
     opts = <wsc.SendOptions>{}
   ): AsyncGenerator<ResponseDataType, void, unknown> {
-    const {id, msg, timeout, cleanup} = await this.prepareMessage(message_data, opts)
+    const {id, msg, timeout, cleanup, send} = await this.prepareMessage(message_data, opts)
     const {queue, config} = this
     let done = false, fulfill: AnyFunc, to: NodeJS.Timeout|null = null
     queue[id] = {
       msg,
       ff: (msg: ResponseDataType&{done?: boolean}) => {
+        if(msg?.done) { delete msg.done; done=true; setTimeout(cleanup) }
         fulfill(msg)
-        if(msg?.done) { cleanup(); done=true }
       },
       data_type: config.data_type,
       sent_time: config.timer ? Date.now() : null
-    }
+    }; send()
     while(!done) yield await new Promise<ResponseDataType>((ff, rj) => {
       to=timeout(rj); fulfill=ff
     }).catch((e) => cleanup(e)).finally(() => {clearTO(to); to=null})

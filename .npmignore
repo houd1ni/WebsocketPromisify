@@ -1,0 +1,7 @@
+dist/bundle.dev.js
+src
+test
+coverage.lcov
+rollup.config.js
+TODO
+tslint.json

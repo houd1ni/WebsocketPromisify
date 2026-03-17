@@ -1,6 +1,6 @@
 
+import { noop, range, wait } from 'pepka'
 import WebSocket, { WebSocketServer } from 'ws'
-import {add, compose, genBy, identity, noop, wait} from 'pepka'
 
 let server: WebSocketServer|null = null
 
@@ -9,7 +9,6 @@ const createServer = (port = 40510) => new Promise<WebSocketServer>((ff, rj) => 
   server = new WebSocketServer({ port }, () => {
     server!.on('connection', (socket: WebSocket&{isAlive: boolean}) => {
       socket.on('message', async (rawMessage: string) => {
-        // console.log({rawMessage: rawMessage.toString()})
         const {id, data} = JSON.parse(rawMessage)
         let response = ''
         if(data.shut) {
@@ -20,34 +19,17 @@ const createServer = (port = 40510) => new Promise<WebSocketServer>((ff, rj) => 
         } else if(data.echo) {
           response = data
         } else if(data.stream) {
-          // Handle streaming responses
-          const chunks = genBy(compose(add(1), identity), 20) // Generate 20 chunks
-          // console.log(chunks)
-          const delay = 2 // 20ms delay between chunks for reliable delivery
-
-          if(data.multi) {
-            // Multi-chunk streaming
-            for(const i in chunks) {
-              const chunk = chunks[i]
-              socket.send(JSON.stringify({
-                id,
-                data: {
-                  ...data, chunk,
-                  done: +i === chunks.length - 1 // Last chunk gets done: true
-                }
-              }))
-              await wait(delay)
-            }
-          } else {
-            // Single response
-            socket.send(JSON.stringify({
-              id,
+          const delay = data.delay || 150
+          const len = 20
+          for(const chunk of range(0, len)) {
+            const is_last = !data.multi || chunk===len-1
+            socket.send(JSON.stringify({ id,
               data: {
-                ...data,
-                chunk: chunks[0],
-                done: true
-              }
+                name: data.name, chunk,
+                [is_last ? 'done' : Symbol()]: is_last}
             }))
+            await wait(delay)
+            if(!data.multi) break
           }
           return null
         }
@@ -73,3 +55,4 @@ const killServer = async () => new Promise<void>((ff, rj) => {
   })
 
 export { createServer, killServer }
+
