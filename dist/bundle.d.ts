@@ -15,6 +15,7 @@ declare namespace wsc {
 	}
 	type AsyncErrCode = Promise<number | null | {}>;
 	type EventHandler = (e: any) => void;
+	type Predicate = (data: any) => boolean;
 	type DataPipe = (message: any) => any;
 	type DataType = "json" | "string";
 	interface Config {
@@ -80,10 +81,18 @@ export declare class WebSocketClient {
 	private connect;
 	get socket(): wsc.Socket | null;
 	ready(): Promise<void>;
-	on(event_name: wsc.WSEvent, handler: (data: any) => any, predicate?: (data: any) => boolean, raw?: boolean): wsc.EventHandler;
-	off(event_name: wsc.WSEvent, handler: (data: any) => any, raw?: boolean): void;
+	on(event_name: wsc.WSEvent, handler: wsc.EventHandler, predicate?: wsc.Predicate, raw?: boolean): wsc.EventHandler;
+	off(event_name: wsc.WSEvent, handler: wsc.EventHandler, raw?: boolean): void;
 	close(): wsc.AsyncErrCode;
 	open(): Promise<number | null> | undefined;
+	addEventListener(e: wsc.WSEvent, cb: wsc.EventHandler, opts?: {
+		predicate?: wsc.Predicate;
+		raw?: boolean;
+	}): wsc.EventHandler;
+	removeEventListener(e: wsc.WSEvent, handler: wsc.EventHandler, opts?: {
+		predicate?: wsc.Predicate;
+		raw?: boolean;
+	}): void;
 	private prepareMessage;
 	/**  .send(your_data) wraps request to server with {id: `hash`, data: `actually your data`},
 	  returns a Promise that will be rejected after a timeout or

@@ -184,8 +184,8 @@ export class WebSocketClient {
   }
   public on(
     event_name: wsc.WSEvent,
-    handler: (data: any) => any,
-    predicate: (data: any) => boolean = T,
+    handler: wsc.EventHandler,
+    predicate: wsc.Predicate = T,
     raw = false
   ) {
     const _handler: wsc.EventHandler = (event) =>
@@ -196,7 +196,7 @@ export class WebSocketClient {
   }
   public off(
     event_name: wsc.WSEvent,
-    handler: (data: any) => any,
+    handler: wsc.EventHandler,
     raw = false
   ) {
     if(raw) return rm_event(this.ws as wsc.Socket, event_name, handler)
@@ -225,6 +225,15 @@ export class WebSocketClient {
       return this.connect()
     }
   }
+  public addEventListener(
+    e: wsc.WSEvent, cb: wsc.EventHandler,
+    opts: {predicate?: wsc.Predicate, raw?: boolean} = {}
+  ) { return this.on(e, cb, opts.predicate, opts.raw) }
+  public removeEventListener(
+    e: wsc.WSEvent,
+    handler: wsc.EventHandler,
+    opts: {predicate?: wsc.Predicate, raw?: boolean} = {}
+  ) { return this.off(e, handler, opts.raw) }
   // TODO: Сделать сэттер элементов конфигурации чтобы двигать таймауты.
   // И эвент, когда схема наша, а соответствующего элемента очереди не ма.
   // Или добавить флажок к эвенту 'message'.F

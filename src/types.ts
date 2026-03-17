@@ -18,6 +18,7 @@ declare namespace wsc {
   export type AsyncErrCode = Promise<number | null | {}>
 
   export type EventHandler = (e: any) => void
+  export type Predicate = (data: any) => boolean
 
   export type DataPipe = (message: any) => any
 
