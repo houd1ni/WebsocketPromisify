@@ -31,6 +31,7 @@ Features (almost all are tunable via constructor config below.)
 - Lazy connect: connects only if something sent, then send all of them!
 - Supports middleware-adapter. E.g. you can use 'ws' package.
 - .on() method with or without condition: analog with .addEventListener.
+
 for more, please, take a look at its' typescript types or ask in [discussions](https://github.com/houd1ni/WebsocketPromisify/discussions).
 
 How it on Server Side ?
@@ -97,7 +98,10 @@ Methods:
   // The server must send the same id for chunks then add done: true in the last one.
   *stream(message)
   // .addEventListener with optional predicate that works after reconnections.
-  on(event_name, handler, predicate = (WebSocketEvent) => boolean)
+  on(event_name, handler, predicate?: ((WebSocketEvent) => boolean), raw?: boolean)
+  off(event_name, handler, raw?: boolean) // `raw` is to attach it to the socket itself.
+  addEventListener(event_name, handler, {predicate, raw})    // almost alias for .on()
+  removeEventListener(event_name, handler, {predicate, raw}) // almost alias for .off()
   // Closes the connection and free up memory. Returns Promise that it has been done.
   close()
   // Routers or modifies frames before the library. Call next(data) to route it to the lib.
