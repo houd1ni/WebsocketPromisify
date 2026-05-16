@@ -1,10 +1,10 @@
 
-import WebSocketClient from '../src/WSC'
-import {AnyFunc, AnyObject} from 'pepka'
-import { native_ws } from '../src/utils'
+import { AnyFunc, AnyObject } from 'pepka'
 import WS from 'ws'
+import { native_ws } from '../src/utils'
+import { WebSocketClient } from '../src/WSC'
 
-export const createNew = (config = {} as wsc.UserConfig, port: number) => new Promise<WebSocketClient>((ff, rj) => {
+export const createNew = (config = {} as Partial<wsc.UserConfig>, port: number) => new Promise<WebSocketClient>((ff, rj) => {
   const ws = new WebSocketClient(Object.assign({
     url: 'ws://127.0.0.1:' + port,
     // log: (...a: any[]) => console.log(...a),
@@ -25,9 +25,7 @@ export const timeout = (time: number, handler: AnyFunc) => async (context: AnyOb
         timer = setTimeout(() => reject(new Error('timeout')), time)
       )
     ])
-  } catch(e) {
-    throw e
-  } finally {
-    if(timer!) clearTimeout(timer)
   }
+  catch(e) { throw e }
+  finally { if(timer!) clearTimeout(timer) }
 }

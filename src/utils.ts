@@ -19,3 +19,7 @@ export const try_splice = <T = any>(arr: T[], el: T) => {
   if(~i) return arr.splice(arr.indexOf(el), 1)
   else return []
 }
+
+export class EventEmitter {
+  // TODO: implement and make the WSC extend it.
+}

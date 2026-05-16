@@ -1,3 +1,5 @@
+
+
 declare namespace wsc {
 
   interface DataObject {
@@ -22,25 +24,27 @@ declare namespace wsc {
 
   export type DataPipe = (message: any) => any
 
-  export type DataType = 'json' | 'string'
+  export interface TimeFnParams { base: number, max: number, jitter: number }
 
   export interface Config {
-    data_type: DataType
     log (event: string, time?: number|null, message?: any): void
     log (event: string, message?: any): void
     timer: boolean
     url: string
     timeout: number
-    reconnect: number
-    reconnection_attempts: number
+    reconnect: {
+      stop_after: number
+      on_timeout: boolean
+      on_break: boolean
+      time_fn: import('pepka').AnyFunc<number, [params: wsc.TimeFnParams, attempt: number]>
+      params: { base: number, max: number, jitter: number }
+    } | false
     max_idle_time: number
     lazy: boolean
     socket: Socket | null
     adapter: (host: string, protocols?: string[]) => Socket
     encode: (key: string, message: any, config: Config) => any
-    decode: (rawMessage: any) => {
-      [id_or_data_key: string]: string
-    }
+    decode: (rawMessage: any) => { [id_or_data_key: string]: string }
     protocols: string[]
     pipes: DataPipe[]
     server: {
@@ -49,21 +53,23 @@ declare namespace wsc {
     },
     ping: {
       interval: number
-      content: any
-    }
+      timeout?: number
+      in:  string|Uint8Array
+      out: string|Uint8Array
+    } | false
   }
 
-  export type UserConfig = Partial<Config>
+  export type UserConfig =
+    import('type-fest').PartialDeep<Config> &
+    ( {socket: Config['socket']} | Pick<Config, 'url'> )
+    
 
   export type SendOptions = Partial<{
     top: any
-    data_type: DataType
-    _is_ping: boolean
   }>
 
   export interface Message {
     msg: any, ff(x: any): any,
-    data_type: DataType,
     sent_time: number | null
   }
 }

@@ -1,12 +1,12 @@
-import { createNew, timeout } from '../utils'
-import mockServer from '../mock/server'
 import { equals, wait } from 'pepka'
+import mockServer from '../mock/server'
 import { test } from '../suite'
+import { createNew, timeout } from '../utils'
 
 /** Reconnects if connection is broken. */
 test('reconnect', timeout(1e4, () => async () => {
   const {port, shutDown} = await mockServer()
-  const ws = await createNew({ reconnect: 1 }, port)
+  const ws = await createNew({}, port)
   await wait(200)
   await shutDown()
   await wait(500)
@@ -19,7 +19,7 @@ test('reconnect', timeout(1e4, () => async () => {
 /** Should send messages that were queued while being disconnected right after the reconnect. */
 test('reconnect-queue', timeout(1e4, async () => {
   const {port, shutDown} = await mockServer()
-  const ws = await createNew({ reconnect: 1, timeout: 5e3 }, port)
+  const ws = await createNew({ timeout: 5e3 }, port)
   await ws.ready()
   await shutDown()
   const msg1 = {echo: true, msg: 'hello!'}
@@ -28,7 +28,7 @@ test('reconnect-queue', timeout(1e4, async () => {
   let ok = false
   const p = new Promise<void>((ff) => ws.send(msg1).then((res) => {
     if(!equals(res, msg1)) throw new Error('msg1 not equals.')
-    else ws.send(msg2).then((res) => {
+    else ws.send(msg2).then((res: any) => {
       if(!equals(res, msg2)) throw new Error('msg2 not equals.')
       else {ok=true}
       ff()

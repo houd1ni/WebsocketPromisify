@@ -12,8 +12,8 @@
     "noUnusedParameters": true,
     "noUnusedLocals": false,
     "rootDir": ".",
-    "baseUrl": ".",
     "allowSyntheticDefaultImports": true,
+    "types": ["@types/node"],
     "outDir": "dist/ts"
   },
   "include": [ "src/**/*", "test/**/*" ]

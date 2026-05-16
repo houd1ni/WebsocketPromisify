@@ -5,3 +5,4 @@ coverage.lcov
 rollup.config.js
 TODO
 tslint.json
+tsconfig.json
