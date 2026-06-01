@@ -183,8 +183,7 @@ export class WebSocketClient<T extends Uint8Array|string=string> {
             case 'error':
               const err = {
                 data,
-                message: `WSP: id_key exists in the incoming message,
-                          but does not exist in the queue!`
+                message: `WSP: id_key exists in the incoming message, but does not exist in the queue!`
               }
               this.log(label_error, err)
               this.call(label_error, err)
