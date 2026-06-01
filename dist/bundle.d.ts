@@ -43,7 +43,7 @@ declare namespace wsc {
 				max: number;
 				jitter: number;
 			};
-		};
+		} | false;
 		max_idle_time: number;
 		lazy: boolean;
 		socket: Socket | null;
@@ -57,6 +57,7 @@ declare namespace wsc {
 		server: {
 			id_key: string;
 			data_key: string;
+			on_collision: "error" | "pass" | "ignore";
 		};
 		ping: {
 			interval: number;

@@ -28,7 +28,7 @@ const default_config = (): wsc.Config => ({
   }),
   decode: (rawMessage) => JSON.parse(rawMessage),
   protocols: [], pipes: [],
-  server: { id_key: 'id', data_key: 'data' },
+  server: { id_key: 'id', data_key: 'data', on_collision: 'error' },
   ping: { interval: 55, timeout: 30, out: 'ping', in: 'pong' }
 })
 

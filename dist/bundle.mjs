@@ -282,7 +282,7 @@ const default_config = () => ({
     }),
     decode: (rawMessage) => JSON.parse(rawMessage),
     protocols: [], pipes: [],
-    server: { id_key: 'id', data_key: 'data' },
+    server: { id_key: 'id', data_key: 'data', on_collision: 'error' },
     ping: { interval: 55, timeout: 30, out: 'ping', in: 'pong' }
 });
 const processConfig = (config) => {
@@ -311,6 +311,7 @@ const nil = null, inf = Infinity;
 const resolved = Promise.resolve(nil);
 const label_message = 'message';
 const label_message_ext = 'message-ext';
+const label_error = 'error';
 const zipnum = new J();
 const dnow = () => Date.now();
 const now = () => dnow() / 1e3;
@@ -332,7 +333,7 @@ const timeout_rm = (q, ff, rj, timeout = .5) => {
 };
 const genid = (q) => {
     const id = zipnum.zip((random() * (MAX_32 - 10)) | 0);
-    return id in q ? genid(q) : id;
+    return q.has(id) ? genid(q) : id;
 };
 const call_q = (q, ...args) => {
     for (const fn of q)
@@ -413,21 +414,24 @@ class WebSocketClient {
     async reconnect(attempt = 0) {
         if (this._reconnecting && attempt === 0)
             return;
+        const { reconnect } = this.config;
+        if (!reconnect)
+            throw new Error('WSC: reconnecting is disabled, but reconned h.b. called!');
         this.log('reconnect');
         this._reconnecting = true;
         this.reconnect_start = now();
         if (!isNil(this.ws))
             this.terminate();
         const { queue } = this;
-        if (attempt > 0 && isNil(await this.connect())) {
+        if (attempt > 0 && isNil(await this.connect())) { // connected.
             clear_q(call_q(queue.on_ready));
             clear_q(queue.on_ready_fail);
             this._reconnecting = false;
             this.reconnect_timeout = nil;
         }
         else {
-            const { stop_after, time_fn, params } = this.config.reconnect;
-            if (now() - this.reconnect_start > stop_after) {
+            const { stop_after, time_fn, params } = reconnect;
+            if (now() - this.reconnect_start > stop_after) { // give up.
                 this.terminate();
                 clear_q(call_q(queue.on_ready_fail));
                 clear_q(queue.on_ready);
@@ -435,7 +439,8 @@ class WebSocketClient {
                 this.reconnect_timeout = nil;
             }
             else
-                this.reconnect_timeout = sett(ms(time_fn(params, attempt)), this.reconnect.bind(this, attempt + 1));
+                this.reconnect_timeout = sett(// try more.
+                ms(time_fn(params, attempt)), this.reconnect.bind(this, attempt + 1));
         }
     }
     resetReconnect() {
@@ -446,9 +451,10 @@ class WebSocketClient {
     }
     initSocket(ws) {
         const { queue, config, router } = this;
+        const { reconnect } = config;
         this.ws = ws;
         clear_q(call_q(this.queue.on_ready));
-        const { id_key, data_key } = config.server;
+        const { id_key, data_key, on_collision } = config.server;
         // works also on previously opened sockets that do not fire 'open' event.
         this.call('open', ws);
         for (const { msg } of queue.send.values())
@@ -461,7 +467,7 @@ class WebSocketClient {
             this.ws = nil;
             clear_q(call_q(queue.on_close));
             this.call('close', ...e);
-            if (!this.intentionally_closed && config.reconnect.on_break)
+            if (!this.intentionally_closed && reconnect && reconnect.on_break)
                 this.reconnect();
         });
         const { ping } = config;
@@ -479,11 +485,22 @@ class WebSocketClient {
                         this.call(label_message, d);
                         q.ff(d);
                     }
+                    else
+                        switch (on_collision) {
+                            case 'error':
+                                const err = {
+                                    data,
+                                    message: `WSP: id_key exists in the incoming message,
+                          but does not exist in the queue!`
+                                };
+                                this.log(label_error, err);
+                                this.call(label_error, err);
+                            case 'ignore': return;
+                            case 'pass': break;
+                        }
                 }
-                else {
-                    this.log(label_message_ext, data);
-                    this.call(label_message_ext, { data });
-                }
+                this.log(label_message_ext, data);
+                this.call(label_message_ext, { data });
             }
             catch (err) {
                 console.error(err, `WSP: Decode error. Got: ${raw}`);
@@ -564,7 +581,7 @@ class WebSocketClient {
         this.ws = nil;
         this.intentionally_closed = true;
     }
-    async close(timeout = .5) {
+    close(timeout = .5) {
         return new Promise((ff, rj) => {
             if (isNull(this.ws))
                 ff(nil);
@@ -590,6 +607,7 @@ class WebSocketClient {
         this.log('send', message_data);
         const { config, queue: { send: send_q, on_ready_fail } } = this;
         const { pipes, server: { data_key } } = config;
+        const { reconnect } = config;
         const { top } = opts;
         const id = genid(send_q);
         if (isObj(top) && data_key in top)
@@ -609,12 +627,14 @@ class WebSocketClient {
         const timeout = (rj) => sett(ms(timeout_time), () => {
             if (send_q.has(id)) {
                 this.call('timeout', message_data);
-                cleanup();
-                const reject = () => rj({
-                    'Websocket timeout expired': timeout_time,
-                    'for the message': message_data
-                });
-                if (config.reconnect.on_timeout) {
+                const reject = () => {
+                    cleanup();
+                    rj({
+                        'Websocket timeout expired': timeout_time,
+                        'for the message': message_data
+                    });
+                };
+                if (reconnect && reconnect.on_timeout) {
                     on_ready_fail.push(reject);
                     this.reconnect();
                 }

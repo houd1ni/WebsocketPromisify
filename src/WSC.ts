@@ -1,4 +1,4 @@
-import { AnyFunc, AnyObject, equals, isNil, multiply, noop, once, T, tap, typeIs } from 'pepka'
+import { AnyFunc, equals, isNil, multiply, noop, once, T, tap, typeIs } from 'pepka'
 import { Zipnum } from 'zipnum'
 import { processConfig } from './config'
 import './types'
@@ -10,6 +10,7 @@ const nil = null, inf = Infinity
 const resolved = Promise.resolve(nil)
 const label_message = 'message'
 const label_message_ext = 'message-ext'
+const label_error = 'error'
 const zipnum = new Zipnum()
 const dnow = () => Date.now()
 const now = () => dnow()/1e3
@@ -37,9 +38,9 @@ const timeout_rm = (q: AnyFunc[], ff: AnyFunc, rj: AnyFunc, timeout=.5) => {
   }, timeout_ms*1e3)
   q.push((...ps) => {clearTO(rm); ff(...ps)})
 }
-const genid = (q: AnyObject): string => {
+const genid = (q: Map<string, wsc.Message>): string => {
   const id = zipnum.zip((random()*(MAX_32-10))|0)
-  return id in q ? genid(q) : id
+  return q.has(id) ? genid(q) : id
 }
 const call_q = (q: AnyFunc[], ...args: any[]) => {
   for(const fn of q) fn(...args)
@@ -123,20 +124,20 @@ export class WebSocketClient<T extends Uint8Array|string=string> {
     this.reconnect_start = now()
     if(!isNil(this.ws)) this.terminate()
     const {queue} = this
-    if(attempt>0 && isNil(await this.connect())) {
+    if(attempt>0 && isNil(await this.connect())) {   // connected.
       clear_q(call_q(queue.on_ready))
       clear_q(queue.on_ready_fail)
       this._reconnecting = false
       this.reconnect_timeout = nil
     } else {
       const {stop_after, time_fn, params} = reconnect
-      if(now()-this.reconnect_start>stop_after) {
+      if(now()-this.reconnect_start>stop_after) {    // give up.
         this.terminate()
         clear_q(call_q(queue.on_ready_fail))
         clear_q(queue.on_ready)
         this._reconnecting = false
         this.reconnect_timeout = nil
-      } else this.reconnect_timeout = sett(
+      } else this.reconnect_timeout = sett(          // try more.
         ms(time_fn(params, attempt)),
         this.reconnect.bind(this, attempt+1)
       )
@@ -153,7 +154,7 @@ export class WebSocketClient<T extends Uint8Array|string=string> {
     const {reconnect} = config
     this.ws = ws
     clear_q(call_q(this.queue.on_ready))
-    const {id_key, data_key} = config.server
+    const {id_key, data_key, on_collision} = config.server
     // works also on previously opened sockets that do not fire 'open' event.
     this.call('open', ws)
     for(const {msg} of queue.send.values()) ws.send(msg)
@@ -177,12 +178,22 @@ export class WebSocketClient<T extends Uint8Array|string=string> {
             const time = q.sent_time ? (dnow() - q.sent_time) : nil
             this.log(label_message, d, time)
             this.call(label_message, d)
-            q.ff(d);
+            q.ff(d)
+          } else switch(on_collision) {
+            case 'error':
+              const err = {
+                data,
+                message: `WSP: id_key exists in the incoming message,
+                          but does not exist in the queue!`
+              }
+              this.log(label_error, err)
+              this.call(label_error, err)
+            case 'ignore': return;
+            case 'pass': break
           }
-        } else {
-          this.log(label_message_ext, data)
-          this.call(label_message_ext, {data})
         }
+        this.log(label_message_ext, data)
+        this.call(label_message_ext, {data})
       } catch (err) {
         console.error(err, `WSP: Decode error. Got: ${raw}`)
       }
@@ -260,7 +271,7 @@ export class WebSocketClient<T extends Uint8Array|string=string> {
     this.ws = nil
     this.intentionally_closed = true
   }
-  public async close(timeout = .5): wsc.AsyncErrCode {
+  public close(timeout = .5): wsc.AsyncErrCode {
     return new Promise((ff, rj) => {
       if(isNull(this.ws)) ff(nil)
       else {
@@ -312,11 +323,13 @@ export class WebSocketClient<T extends Uint8Array|string=string> {
     const timeout = (rj: AnyFunc) => sett(ms(timeout_time), () => {
       if(send_q.has(id)) {
         this.call('timeout', message_data)
-        cleanup()
-        const reject = () => rj({
-          'Websocket timeout expired': timeout_time,
-          'for the message': message_data
-        })
+        const reject = () => {
+          cleanup()
+          rj({
+            'Websocket timeout expired': timeout_time,
+            'for the message': message_data
+          })
+        }
         if(reconnect && reconnect.on_timeout) {
           on_ready_fail.push(reject)
           this.reconnect()

@@ -11,7 +11,6 @@ const responseData = await ws.send({catSaid: 'Meow!'})
 ```
 
 // If you detected some bug, want some stuff to be added, feel free to open an issue!
-Large data support (chunking), plugins and different server-side implementations are coming.
 To see a Node.js server-side part example, please, take a look on test/mock in github repo.
 
 
@@ -73,6 +72,7 @@ interface Config {
   server: { // Unique id's and data keys to negotiate with back-end.
     id_key:   'id'
     data_key: 'data'
+    on_collision: 'error'|'pass'|'ignore' // if a message with unregistred id_key value has come. pass -> handle in 'message-ext'.
   }
   ping: { // Pings to avoid interruptions or false to disable.
     interval: number       // inter-ping interval. default: 55.
@@ -92,7 +92,7 @@ Fields/Props:
 
 Methods:
 ```javascript
-  ready() // Returns Promise that connection is open. Works even if it already opened.
+  ready(timeout?: number) // Returns Promise that connection is open. Works even if it already opened.
   send(message) // sends any type of message and returns a Promise.
   // Streams as async generator, resolving in chunks.
   // The server must send the same id for chunks then add done: true in the last one.
@@ -103,7 +103,7 @@ Methods:
   addEventListener(event_name, handler, {predicate, raw})    // almost alias for .on()
   removeEventListener(event_name, handler, {predicate, raw}) // almost alias for .off()
   // Closes the connection and free up memory. Returns Promise that it has been done.
-  close()
+  close(timeout?: number)
   // Routers or modifies frames before the library. Call next(data) to route it to the lib.
   route(handler: (data: T, next: Function) => any)
 ```
@@ -117,19 +117,16 @@ Example (more in `tests` dir in the repo):
   type Protocol = Uint8Array // or string (in the native WebSocket by default).
 
   const ws = new WebSocketClient<Protocol>({
-    // If url starts with /,
+    // if url starts with /,
     // it results in ws(s if in https)://currentHost:currentPort/thisUrl
     url: 'ws://example.com/ws',
-    timeout: 2e3, // 1400ms by default.
-    timer: true, // false by default.
-    // To log data trips. Events: open, close, send, reconnect, error.
-    // If timer isn't enabled, the signature is log(event, message)
+    timeout: 2,   // 2s by default.
+    timer: true,  // false by default.
+    // to log data trips. Events: open, close, send, reconnect, error.
+    // if timer isn't enabled, the signature is log(event, message)
     log(event, time, message = '') {
-      if(time !== null) {
-        console.log(event, `in ${time}ms`, message)
-      } else {
-        console.log(event, message)
-      }
+      if(time !== null) console.log(event, `in ${time}ms`, message)
+      else console.log(event, message)
     }
   })
 

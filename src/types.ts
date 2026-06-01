@@ -50,6 +50,7 @@ declare namespace wsc {
     server: {
       id_key: string
       data_key: string
+      on_collision: 'error'|'pass'|'ignore'
     },
     ping: {
       interval: number
