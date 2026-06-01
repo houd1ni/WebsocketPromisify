@@ -486,6 +486,7 @@ class WebSocketClient {
                         this.log(label_message, d, time);
                         this.call(label_message, d);
                         q.ff(d);
+                        return;
                     }
                     else
                         switch (on_collision) {
@@ -501,7 +502,7 @@ class WebSocketClient {
                         }
                 }
                 this.log(label_message_ext, data);
-                this.call(label_message_ext, { data });
+                this.call(label_message_ext, data);
             }
             catch (err) {
                 console.error(err, `WSP: Decode error. Got: ${raw}`);
